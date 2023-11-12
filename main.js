@@ -4,9 +4,6 @@ const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
 
 function onYouTubeIframeAPIReady() {
   player = new YT.Player("wave-video", {
-    height: "390",
-    width: "640",
-    videoId: "M7lc1UVf-VE",
     playerVars: {
       playsinline: 1,
     },
