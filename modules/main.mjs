@@ -1,8 +1,8 @@
-let player;
-// Yeah, I know this is an unsecured API key. Sooner or later I suppose some dickhead will max out my requests on it. Shrug.
+export let player;
+// Yeah, I know this is an unsecured API key. Sooner or later I suppose some miscreant will max out my requests on it. Shrug.
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
 
-function onYouTubeIframeAPIReady() {
+window.onYouTubeIframeAPIReady = ()=>{
   player = new YT.Player("wave-video", {
     playerVars: {
       playsinline: 1,
