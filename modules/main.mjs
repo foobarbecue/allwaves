@@ -1,3 +1,5 @@
+import {parseSeshFile} from "./parse_session.mjs"
+
 export let player;
 // Yeah, I know this is an unsecured API key. Sooner or later I suppose some miscreant will max out my requests on it. Shrug.
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
@@ -33,6 +35,7 @@ const get_vids = async () => {
       for (const vid of playlist_itemlist.items) {
         const vid_li = document.createElement("li");
         vid_li.textContent = vid.snippet.title;
+        console.log(parseSeshFile(`seshfiles/${vid.snippet.title}.SESSION`))
         pl_li.querySelector("ul").appendChild(vid_li);
         const desc_ul = await format_description(vid);
         vid_li.appendChild(desc_ul);

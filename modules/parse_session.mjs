@@ -1,4 +1,4 @@
-// Copied from https://github.com/maiermic/soloshot-session-to-gpx-converter/blob/master/index.html
+// Based on https://github.com/maiermic/soloshot-session-to-gpx-converter/blob/master/index.html
 // On 2023-11-13
 
 function toHex(number) {
@@ -107,66 +107,66 @@ class Gpx {
     }
 }
 
-function handleFiles(files) {
-    if (files.length !== 1) {
-        alert('Select exactly one session file');
-    }
-    const file = files[0];
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        const r = new ByteReader(e.target.result);
-        const enc = new TextDecoder();
-        try {
-            assert(enc.decode(r.read(4)) === 'SOLO', 'Invalid session file. Expected file content to start with "SOLO"');
-            r.read(12);
-            const TYPE_ID_LENGTH = 1;
-            const DATA_LENGTH = 1;
-            const HEADER_LENGTH = 10;
-            const TYPE_PREFIX = 170;
-            const gpx = new Gpx();
-            const gpxBaseTrack = new GpxTrack();
-            const gpxTagTrack = new GpxTrack();
-            let previousTagId = null;
-            while (!r.isEnd()) {
-                assert(r.read(1)[0] === TYPE_PREFIX, 'Unexpected file content. Expected type prefix, but got something else');
-                const typeId = bufferToHex(r.read(TYPE_ID_LENGTH));
-                const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
-                const header = bufferToHex(r.read(HEADER_LENGTH));
-                console.debug(`typeId: ${typeId}, dataLength: ${dataLength}`)
-                switch (typeId) {
-                    case '1d':
-                    case 'a0':
-                    case 'a6':
-                    case 'a5':
-                    case 'a3':
-                    case 'a4':
-                        r.read(dataLength);
-                        break;
-                    case '08':
-                        const tagId = r.readByte();
-                        const basePosition = r.readGpsLocation();
-                        const tagPosition = r.readGpsLocation();
-                        r.read(10);
-                        gpxBaseTrack.add(basePosition);
-                        if (previousTagId !== null && previousTagId !== tagId) {
-                            gpx.addTrack(gpxTagTrack)
-                        }
-                        gpxTagTrack.add(tagPosition);
-                        previousTagId = tagId;
-                        break;
-                    default:
-                        throw `Unexpected file content. Unknown type ID: ${typeId}`;
+export async function parseSeshFile(seshUrl) {
+    const seshFile = await fetch(seshUrl)
+    if (seshFile.ok){
+        const seshBlob = await seshFile.blob()
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const r = new ByteReader(e.target.result);
+            const enc = new TextDecoder();
+            try {
+                assert(enc.decode(r.read(4)) === 'SOLO', 'Invalid session file. Expected file content to start with "SOLO"');
+                r.read(12);
+                const TYPE_ID_LENGTH = 1;
+                const DATA_LENGTH = 1;
+                const HEADER_LENGTH = 10;
+                const TYPE_PREFIX = 170;
+                const gpx = new Gpx();
+                const gpxBaseTrack = new GpxTrack();
+                const gpxTagTrack = new GpxTrack();
+                let previousTagId = null;
+                while (!r.isEnd()) {
+                    assert(r.read(1)[0] === TYPE_PREFIX, 'Unexpected file content. Expected type prefix, but got something else');
+                    const typeId = bufferToHex(r.read(TYPE_ID_LENGTH));
+                    const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
+                    const header = bufferToHex(r.read(HEADER_LENGTH));
+                    console.debug(`typeId: ${typeId}, dataLength: ${dataLength}`)
+                    switch (typeId) {
+                        case '1d':
+                        case 'a0':
+                        case 'a6':
+                        case 'a5':
+                        case 'a3':
+                        case 'a4':
+                            r.read(dataLength);
+                            break;
+                        case '08':
+                            const tagId = r.readByte();
+                            const basePosition = r.readGpsLocation();
+                            const tagPosition = r.readGpsLocation();
+                            r.read(10);
+                            gpxBaseTrack.add(basePosition);
+                            if (previousTagId !== null && previousTagId !== tagId) {
+                                gpx.addTrack(gpxTagTrack)
+                            }
+                            gpxTagTrack.add(tagPosition);
+                            previousTagId = tagId;
+                            break;
+                        default:
+                            throw `Unexpected file content. Unknown type ID: ${typeId}`;
+                    }
                 }
+                gpx.addTrack(gpxTagTrack);
+                gpx.addTrack(gpxBaseTrack);
+                const blob = new Blob([gpx.flush()], {
+                    type: 'application/gpx+xml',
+                });
+                return blob
+            } catch (e) {
+                alert(e);
             }
-            gpx.addTrack(gpxTagTrack);
-            gpx.addTrack(gpxBaseTrack);
-            const blob = new Blob([gpx.flush()], {
-                type: 'application/gpx+xml',
-            });
-            saveAs(blob, `${file.name}.gpx`);
-        } catch (e) {
-            alert(e);
         }
+        reader.readAsArrayBuffer(seshBlob);
     };
-    reader.readAsArrayBuffer(file);
 }
