@@ -168,5 +168,5 @@ export async function parseSeshFile(seshUrl) {
             }
         }
         reader.readAsArrayBuffer(seshBlob);
-    };
+    } else return false
 }

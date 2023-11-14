@@ -27,18 +27,22 @@ const get_vids = async () => {
     );
     const playlist_itemlist = await resp.json();
     if (playlist.snippet.title.includes("surfing")) {
-      const pl_li = document.createElement("li");
-      pl_li.textContent = playlist.snippet.title;
-      pl_li.appendChild(document.createElement("ul"));
-      pl_li.id = playlist.id;
-      document.querySelector("#wave-list>ul").appendChild(pl_li);
-      for (const vid of playlist_itemlist.items) {
-        const vid_li = document.createElement("li");
-        vid_li.textContent = vid.snippet.title;
-        console.log(parseSeshFile(`seshfiles/${vid.snippet.title}.SESSION`))
-        pl_li.querySelector("ul").appendChild(vid_li);
-        const desc_ul = await format_description(vid);
-        vid_li.appendChild(desc_ul);
+      const seshFileDate = /\d{4} \d{2} \d{2}/.exec(playlist_itemlist.items[0].snippet.title)[0]
+      const seshFileName = `SS3_EDIT_${seshFileDate}.SESSION`.replaceAll(' ','_')
+      const seshData = await parseSeshFile(`seshfiles/${seshFileName}`)
+      if (seshData) {
+        const pl_li = document.createElement("li");
+        pl_li.textContent = playlist.snippet.title;
+        pl_li.appendChild(document.createElement("ul"));
+        pl_li.id = playlist.id;
+        document.querySelector("#wave-list>ul").appendChild(pl_li);
+        for (const vid of playlist_itemlist.items) {
+          const vid_li = document.createElement("li");
+          vid_li.textContent = vid.snippet.title;
+          pl_li.querySelector("ul").appendChild(vid_li);
+          const desc_ul = await format_description(vid);
+          vid_li.appendChild(desc_ul);
+        }
       }
     }
   }
