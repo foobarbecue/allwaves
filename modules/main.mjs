@@ -64,6 +64,4 @@ const format_description = async (playlist_vid) => {
   return description;
 };
 
-const
-
 get_vids();
