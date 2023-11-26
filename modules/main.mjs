@@ -1,4 +1,6 @@
 import { loadAndParseSession } from "./parse_session.mjs"
+import { makeMap } from "./wave_map.mjs";
+
 export let player;
 // Yeah, I know this is an unsecured API key. Sooner or later I suppose some miscreant will max out my requests on it. Shrug.
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
@@ -18,7 +20,7 @@ const get_playlists = async () => {
   return await resp.json();
 };
 
-const get_vids = async () => {
+const getVids = async () => {
   const playlists = await get_playlists();
   for (const playlist of playlists.items) {
     const resp = await fetch(
@@ -65,4 +67,5 @@ const format_description = async (playlist_vid) => {
   return description;
 };
 
-get_vids();
+makeMap();
+getVids();
