@@ -1,5 +1,5 @@
-// Copied from https://github.com/maiermic/soloshot-session-to-gpx-converter/blob/master/index.html
-// On 2023-11-13
+// Based on https://github.com/maiermic/soloshot-session-to-gpx-converter/blob/master/index.html
+// as retrieved on 2023-11-13
 
 function toHex(number) {
     return number.toString(16).padStart(2, "0");
@@ -65,19 +65,15 @@ class ByteReader {
     }
 }
 
-function parseSession(){
-        const r = new ByteReader(e.target.result);
+async function parseSession(progressEvt){
+        const r = new ByteReader(progressEvt.target.result);
         const enc = new TextDecoder();
-        try {
             assert(enc.decode(r.read(4)) === 'SOLO', 'Invalid session file. Expected file content to start with "SOLO"');
             r.read(12);
             const TYPE_ID_LENGTH = 1;
             const DATA_LENGTH = 1;
             const HEADER_LENGTH = 10;
             const TYPE_PREFIX = 170;
-            const gpx = new Gpx();
-            const gpxBaseTrack = new GpxTrack();
-            const gpxTagTrack = new GpxTrack();
             let previousTagId = null;
             while (!r.isEnd()) {
                 assert(r.read(1)[0] === TYPE_PREFIX, 'Unexpected file content. Expected type prefix, but got something else');
@@ -97,36 +93,26 @@ function parseSession(){
                     case '08':
                         const tagId = r.readByte();
                         const basePosition = r.readGpsLocation();
+                        console.log(basePosition)
                         const tagPosition = r.readGpsLocation();
+                        console.log(tagPosition)
                         r.read(10);
-                        gpxBaseTrack.add(basePosition);
-                        if (previousTagId !== null && previousTagId !== tagId) {
-                            gpx.addTrack(gpxTagTrack)
-                        }
-                        gpxTagTrack.add(tagPosition);
                         previousTagId = tagId;
                         break;
                     default:
                         throw `Unexpected file content. Unknown type ID: ${typeId}`;
                 }
             }
-            gpx.addTrack(gpxTagTrack);
-            gpx.addTrack(gpxBaseTrack);
-            const blob = new Blob([gpx.flush()], {
-                type: 'application/gpx+xml',
-            });
-            saveAs(blob, `${file.name}.gpx`);
-        } catch (e) {
-            alert(e);
-        }
 }
 
-function handleFiles(files) {
-    if (files.length !== 1) {
-        alert('Select exactly one session file');
-    }
-    const file = files[0];
+export async function loadAndParseSession(url){
+    const fileResp = await fetch(url);
+    const blob = await fileResp.blob();
     const reader = new FileReader();
     reader.onload = parseSession;
-    reader.readAsArrayBuffer(file);
+    await reader.readAsArrayBuffer(blob)
+    return reader
 }
+
+// FIXME exposed for debugging
+window.loadAndParseSession = loadAndParseSession;

@@ -1,3 +1,4 @@
+import { loadAndParseSession } from "./parse_session.mjs"
 export let player;
 // Yeah, I know this is an unsecured API key. Sooner or later I suppose some miscreant will max out my requests on it. Shrug.
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
