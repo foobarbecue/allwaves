@@ -65,55 +65,7 @@ class ByteReader {
     }
 }
 
-class GpxTrack {
-
-    constructor() {
-        this._reset();
-    }
-
-    _reset() {
-        this.buffer = '  <trk>\n    <trkseg>\n';
-    }
-
-    add(pos) {
-        this.buffer += [
-            `      <trkpt lat="${pos.latitude}" lon="${pos.longitude}">`,
-            `        <ele>${pos.elevation}</ele>`,
-            '      </trkpt>\n'
-        ].join('\n');
-    }
-
-    flush() {
-        const result = this.buffer + '    </trkseg>\n  </trk>\n';
-        this._reset();
-        return result;
-    }
-
-}
-
-
-class Gpx {
-    constructor() {
-        this.buffer = '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n';
-        this.buffer += '<gpx version="1.1" creator="">\n';
-    }
-
-    addTrack(track) {
-        this.buffer += track.flush();
-    }
-
-    flush() {
-        return this.buffer + '</gpx>\n';
-    }
-}
-
-function handleFiles(files) {
-    if (files.length !== 1) {
-        alert('Select exactly one session file');
-    }
-    const file = files[0];
-    const reader = new FileReader();
-    reader.onload = function (e) {
+function parseSession(){
         const r = new ByteReader(e.target.result);
         const enc = new TextDecoder();
         try {
@@ -167,6 +119,14 @@ function handleFiles(files) {
         } catch (e) {
             alert(e);
         }
-    };
+}
+
+function handleFiles(files) {
+    if (files.length !== 1) {
+        alert('Select exactly one session file');
+    }
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onload = parseSession;
     reader.readAsArrayBuffer(file);
 }
