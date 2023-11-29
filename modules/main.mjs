@@ -67,5 +67,5 @@ const format_description = async (playlist_vid) => {
   return description;
 };
 
-makeMap();
 getVids();
+makeMap();
