@@ -6,6 +6,7 @@ export let player;
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
 
 window.onYouTubeIframeAPIReady = ()=>{
+  console.debug('setting up youtube iframe player')
   player = new YT.Player("wave-video", {
     playerVars: {
       playsinline: 1,

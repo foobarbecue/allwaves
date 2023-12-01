@@ -65,8 +65,9 @@ class ByteReader {
     }
 }
 
-async function parseSession(progressEvt){
-        const r = new ByteReader(progressEvt.target.result);
+async function parseSession(sessionReader){
+        const session = [];
+        const r = new ByteReader(sessionReader);
         const enc = new TextDecoder();
             assert(enc.decode(r.read(4)) === 'SOLO', 'Invalid session file. Expected file content to start with "SOLO"');
             r.read(12);
@@ -93,9 +94,8 @@ async function parseSession(progressEvt){
                     case '08':
                         const tagId = r.readByte();
                         const basePosition = r.readGpsLocation();
-                        console.log(basePosition)
                         const tagPosition = r.readGpsLocation();
-                        console.log(tagPosition)
+                        session.push({basePosition, tagPosition})
                         r.read(10);
                         previousTagId = tagId;
                         break;
@@ -103,15 +103,15 @@ async function parseSession(progressEvt){
                         throw `Unexpected file content. Unknown type ID: ${typeId}`;
                 }
             }
+        return session
 }
 
 export async function loadAndParseSession(url){
     const fileResp = await fetch(url);
     const blob = await fileResp.blob();
-    const reader = new FileReader();
-    reader.onload = parseSession;
-    await reader.readAsArrayBuffer(blob)
-    return reader
+    const arrayBuffer = await blob.arrayBuffer();
+    const sessionData = await parseSession(arrayBuffer);
+    return sessionData;
 }
 
 // FIXME exposed for debugging
