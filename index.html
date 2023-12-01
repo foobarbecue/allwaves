@@ -8,6 +8,16 @@
 <div id="main-container">
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+        window.onYouTubeIframeAPIReady = ()=>{
+            console.debug('setting up youtube iframe player')
+            player = new YT.Player("wave-video", {
+                playerVars: {
+                    playsinline: 1,
+                },
+            });
+        }
+    </script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="" defer/>
