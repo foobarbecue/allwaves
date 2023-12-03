@@ -1,7 +1,6 @@
 import { loadAndParseSession } from "./parse_session.mjs"
 import { makeMap } from "./wave_map.mjs";
 
-export let player;
 // Yeah, I know this is an unsecured API key. Sooner or later I suppose some miscreant will max out my requests on it. Shrug.
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
 
@@ -53,7 +52,7 @@ const format_description = async (playlist_vid) => {
       const mins = Number(wave_time_re[1]);
       const secs = Number(wave_time_re[2]);
       const tot_secs = mins * 60 + secs;
-      player.loadVideoById(playlist_vid.snippet.resourceId.videoId, tot_secs);
+      window.player.loadVideoById(playlist_vid.snippet.resourceId.videoId, tot_secs);
     };
     description.appendChild(wave_li);
   });
