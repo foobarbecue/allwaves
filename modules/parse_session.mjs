@@ -107,7 +107,7 @@ async function parseSession(sessionReader){
 }
 
 export async function loadAndParseSession(url){
-    const fileResp = await fetch(url);
+    const fileResp = await fetch(url)
     const blob = await fileResp.blob();
     const arrayBuffer = await blob.arrayBuffer();
     const sessionData = await parseSession(arrayBuffer);

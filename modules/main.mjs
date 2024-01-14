@@ -1,9 +1,8 @@
 import { loadAndParseSession } from "./parse_session.mjs"
-import { makeMap } from "./wave_map.mjs";
-
+import {makeMap, setMapContents} from "./wave_map.mjs";
+import * as leaflet from "https://unpkg.com/leaflet/dist/leaflet-src.esm.js";
 // Yeah, I know this is an unsecured API key. Sooner or later I suppose some miscreant will max out my requests on it. Shrug.
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
-
 
 const get_playlists = async () => {
   const resp = await fetch(
@@ -11,6 +10,8 @@ const get_playlists = async () => {
   );
   return await resp.json();
 };
+
+const seshGeodataCache = {};
 
 const getVids = async () => {
   const playlists = await get_playlists();
@@ -36,6 +37,8 @@ const getVids = async () => {
   }
 };
 
+let waveMap = makeMap();
+
 const format_description = async (playlist_vid) => {
   const description = document.createElement("ul");
   const waves = playlist_vid.snippet.description.trim().split("\n");
@@ -53,11 +56,24 @@ const format_description = async (playlist_vid) => {
       const secs = Number(wave_time_re[2]);
       const tot_secs = mins * 60 + secs;
       window.player.loadVideoById(playlist_vid.snippet.resourceId.videoId, tot_secs);
+      drawGeodataForDay(
+          (/\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title))[0]
+      );
     };
     description.appendChild(wave_li);
+
   });
   return description;
 };
 
+function drawGeodataForDay(seshDate){
+  // seshDate should be a string like "2023 08 20"
+  if (! seshGeodataCache.hasOwnProperty(seshDate)){
+    seshGeodataCache[seshDate] = loadAndParseSession(
+        `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ","_")}.SESSION`
+    )
+  }
+  setMapContents(seshGeodataCache[seshDate], waveMap)
+}
+
 getVids();
-makeMap();
