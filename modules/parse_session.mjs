@@ -95,7 +95,7 @@ async function parseSession(sessionReader){
                         const tagId = r.readByte();
                         const basePosition = r.readGpsLocation();
                         const tagPosition = r.readGpsLocation();
-                        session.push({basePosition, tagPosition})
+                        session.push({tagId, basePosition, tagPosition})
                         r.read(10);
                         previousTagId = tagId;
                         break;
