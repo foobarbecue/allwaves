@@ -84,3 +84,4 @@ async function drawGeodataForDay(seshDate){
 }
 
 getVids();
+drawGeodataForDay("2023 10 10");
