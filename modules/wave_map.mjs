@@ -13,11 +13,19 @@ export function makeMap(){
 }
 
 export async function setMapContents(wptList, waveMap){
+    // clear all previously loaded tag tracks
+    for (let lyrId in waveMap._layers){
+        if (waveMap._layers[lyrId]?.options?.kindOfLayer == 'tagtrack'){
+            waveMap.removeLayer(waveMap._layers[lyrId])
+        }
+    }
+
+    // add tag tracks
     const tagTracks = leaflet.featureGroup();
     for (let tagId in wptList){
         const seshPolyline = leaflet.polyline(
             wptList[tagId],
-            {color: colorPalette[tagId]}
+            {color: colorPalette[tagId], kindOfLayer: 'tagtrack'}
         );
         tagTracks.addLayer(seshPolyline);
     }
