@@ -16,7 +16,7 @@ const getVids = async () => {
   const playlists = await get_playlists();
   for (const playlist of playlists.items) {
     const resp = await fetch(
-      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlist.id}&key=${api_key}`,
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${playlist.id}&key=${api_key}`,
     );
     const playlist_itemlist = await resp.json();
     if (playlist.snippet.title.includes("surfing")) {
@@ -29,7 +29,7 @@ const getVids = async () => {
         const vid_li = document.createElement("li");
         vid_li.textContent = vid.snippet.title;
         pl_li.querySelector("ul").appendChild(vid_li);
-        const desc_ul = await format_description(vid);
+        const desc_ul = await formatDescription(vid);
         vid_li.appendChild(desc_ul);
       }
     }
@@ -38,7 +38,7 @@ const getVids = async () => {
 
 let waveMap = makeMap();
 
-const format_description = async (playlist_vid) => {
+const formatDescription = async (playlist_vid) => {
   const description = document.createElement("ul");
   const waves = playlist_vid.snippet.description.trim().split("\n");
   // ignore anything that doesn't have a time (check for :) or "No waves"

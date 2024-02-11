@@ -81,7 +81,6 @@ async function parseSession(sessionReader){
                 const typeId = bufferToHex(r.read(TYPE_ID_LENGTH));
                 const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
                 const header = bufferToHex(r.read(HEADER_LENGTH));
-                console.debug(`typeId: ${typeId}, dataLength: ${dataLength}`)
                 switch (typeId) {
                     case '1d':
                     case 'a0':
@@ -113,6 +112,3 @@ export async function loadAndParseSession(url){
     const sessionData = await parseSession(arrayBuffer);
     return sessionData;
 }
-
-// FIXME exposed for debugging
-window.loadAndParseSession = loadAndParseSession;
