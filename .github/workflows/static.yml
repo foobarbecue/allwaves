@@ -29,10 +29,13 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: checkout
+        uses: actions/checkout@v2
         with:
-          lfs: true
+            lfs: 'true'
+      - name: checkoutLFS
+        uses: actions/checkout@v2
+      - run: git lfs pull
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
