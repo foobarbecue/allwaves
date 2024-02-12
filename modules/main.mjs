@@ -5,7 +5,7 @@ const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
 
 const get_playlists = async () => {
   const resp = await fetch(
-    `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCVeahPBre3Q1vC19I5WYP-Q&maxResults=25&key=${api_key}`,
+    `https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&channelId=UCVeahPBre3Q1vC19I5WYP-Q&maxResults=50&key=${api_key}`,
   );
   return await resp.json();
 };
