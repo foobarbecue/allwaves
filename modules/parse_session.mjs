@@ -73,7 +73,8 @@ async function parseSession(sessionReader){
             r.read(12);
             const TYPE_ID_LENGTH = 1;
             const DATA_LENGTH = 1;
-            const HEADER_LENGTH = 10;
+            const HEADER_LENGTH = 2;
+            const TIMESTAMP_LENGTH = 8;
             const TYPE_PREFIX = 170;
             let previousTagId = null;
             while (!r.isEnd()) {
@@ -81,6 +82,7 @@ async function parseSession(sessionReader){
                 const typeId = bufferToHex(r.read(TYPE_ID_LENGTH));
                 const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
                 const header = bufferToHex(r.read(HEADER_LENGTH));
+                const timestamp = bufferToHex(r.read(TIMESTAMP_LENGTH));
                 switch (typeId) {
                     case '1d':
                     case 'a0':
@@ -94,7 +96,7 @@ async function parseSession(sessionReader){
                         const tagId = r.readByte();
                         const basePosition = r.readGpsLocation();
                         const tagPosition = r.readGpsLocation();
-                        session.push({tagId, basePosition, tagPosition})
+                        session.push({tagId, basePosition, tagPosition, timestamp})
                         r.read(10);
                         previousTagId = tagId;
                         break;
