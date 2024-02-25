@@ -1,4 +1,5 @@
 import * as leaflet from "https://unpkg.com/leaflet/dist/leaflet-src.esm.js";
+import {marker} from "https://unpkg.com/leaflet/dist/leaflet-src.esm.js";
 
 const colorPalette = ['black', 'blue', 'green']
 
@@ -9,6 +10,10 @@ export function makeMap(){
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(waveMap);
     waveMap.fitWorld();
+    const presentLoc = new leaflet.marker([0,0]);
+    waveMap.addLayer(presentLoc)
+    waveMap.presentLoc = presentLoc;
+    waveMap.tagTracks = [];
     return waveMap
 }
 
@@ -30,6 +35,77 @@ export async function setMapContents(wptList, waveMap){
         tagTracks.addLayer(seshPolyline);
     }
     tagTracks.addTo(waveMap);
-    leaflet.control.layers().addTo(waveMap);
+    waveMap.tagTracks = tagTracks;
+    // leaflet.control.layers().addTo(waveMap);
     waveMap.fitBounds(tagTracks.getBounds());
 }
+
+/**
+ * Given a time trackStartTime as a js Date object, a video number vidNum and vidTimeMS in milliseconds, return UTC time
+ * @param {Date} trackStartTime
+ * @param {number} vidNum
+ * @param {number} vidTimeMS
+ */
+function vidTimeToUTC(trackStartTime, vidNum, vidTimeMS){
+    const ssVidLengthMS =  623623;
+    return new Date(trackStartTime.getTime() + vidNum * ssVidLengthMS + vidTimeMS * 1000);
+}
+
+function utcToSStimestamp(trackStartTime, ssTimestamp){
+    return new Date(ssTimestamp - trackStartTime)
+}
+
+function setMarkerToTime(time, waveMap){
+    waveMap.presentLoc.setLatLng(waveMap.tagTracks.getCenter())
+}
+
+/**
+ * Given a video title in the format 'SS3 TRACK VIDEO 2024 02 10 080301 5', return a Date object
+ * @param vidTitle
+ */
+function vidTitleToTrackStartTime(vidTitle){
+    // Use a regular expression to extract the date and time components from the title
+    // The expected format is "SS3 TRACK VIDEO YYYY MM DD HHMMSS"
+    const regex = /VIDEO (\d{4}) (\d{2}) (\d{2}) (\d{2})(\d{2})(\d{2})/;
+    const match = vidTitle.match(regex);
+
+    if (match) {
+        // Extract the year, month, day, hour, minute, and second from the regex match
+        const year = parseInt(match[1], 10);
+        // Subtract 1 from month because JavaScript months are 0-indexed
+        const month = parseInt(match[2], 10) - 1;
+        const day = parseInt(match[3], 10);
+        const hour = parseInt(match[4], 10);
+        const minute = parseInt(match[5], 10);
+        const second = parseInt(match[6], 10);
+
+        // Create and return the Date object
+        return new Date(year, month, day, hour, minute, second);
+    } else {
+        // Return null or throw an error if the format does not match
+        console.error('Video title format is incorrect.');
+        return null;
+    }
+
+}
+
+const playerWindow = player.getIframe().contentWindow;
+// adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG
+window.addEventListener("message", function(evt){
+    if (evt.source === playerWindow){
+        const data = JSON.parse(evt.data)
+        if (
+            data.event === "infoDelivery" &&
+            data.info &&
+            data.info.currentTime
+        ){
+            const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
+            console.log(
+                // utcToSStimestamp(
+                // trackStartTime,
+                vidTimeToUTC(trackStartTime, 5, data.info.currentTime))
+            // )
+        }
+    }
+})
+
