@@ -14,10 +14,28 @@ export function makeMap(){
     waveMap.addLayer(presentLoc)
     waveMap.presentLoc = presentLoc;
     waveMap.tagTracks = [];
+
+    // adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG , so we can update the map
+    const playerWindow = player.getIframe().contentWindow;
+    window.addEventListener("message", function(evt){
+        if (evt.source === playerWindow){
+            const data = JSON.parse(evt.data)
+            if (
+                data.event === "infoDelivery" &&
+                data.info &&
+                data.info.currentTime
+            ){
+                const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
+                const latestTime = vidTimeToUTC(trackStartTime, 5, data.info.currentTime)
+                setMarkerToTime(latestTime, waveMap)
+            }
+        }
+    })
+
     return waveMap
 }
 
-export async function setMapContents(wptList, waveMap){
+export async function setMapContents(wptList, timestampList, waveMap){
     // clear all previously loaded tag tracks
     for (let lyrId in waveMap._layers){
         if (waveMap._layers[lyrId]?.options?.kindOfLayer == 'tagtrack'){
@@ -30,7 +48,7 @@ export async function setMapContents(wptList, waveMap){
     for (let tagId in wptList){
         const seshPolyline = leaflet.polyline(
             wptList[tagId],
-            {color: colorPalette[tagId], kindOfLayer: 'tagtrack'}
+            {color: colorPalette[tagId], kindOfLayer: 'tagtrack', wptTimes: timestampList}
         );
         tagTracks.addLayer(seshPolyline);
     }
@@ -56,7 +74,13 @@ function utcToSStimestamp(trackStartTime, ssTimestamp){
 }
 
 function setMarkerToTime(time, waveMap){
-    waveMap.presentLoc.setLatLng(waveMap.tagTracks.getCenter())
+
+    for (const layerId in waveMap.tagTracks._layers){
+        const trackLayer = waveMap.tagTracks._layers[layerId]
+        // FIXME lookup index in time list at trackLayer.options.wptTimes
+
+        waveMap.presentLoc.setLatLng(trackLayer._latlngs[0])
+    }
 }
 
 /**
@@ -88,24 +112,4 @@ function vidTitleToTrackStartTime(vidTitle){
     }
 
 }
-
-const playerWindow = player.getIframe().contentWindow;
-// adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG
-window.addEventListener("message", function(evt){
-    if (evt.source === playerWindow){
-        const data = JSON.parse(evt.data)
-        if (
-            data.event === "infoDelivery" &&
-            data.info &&
-            data.info.currentTime
-        ){
-            const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
-            console.log(
-                // utcToSStimestamp(
-                // trackStartTime,
-                vidTimeToUTC(trackStartTime, 5, data.info.currentTime))
-            // )
-        }
-    }
-})
 

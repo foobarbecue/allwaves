@@ -52,6 +52,10 @@ class ByteReader {
         return this.read(1)[0];
     }
 
+    readTimestamp(){
+        return hexToSignedInt(bufferToHex(this.read(8)))
+    }
+
     readGpsLocation() {
         return {
             latitude: this.readInt() / 1_000_000,
@@ -74,7 +78,6 @@ async function parseSession(sessionReader){
             const TYPE_ID_LENGTH = 1;
             const DATA_LENGTH = 1;
             const HEADER_LENGTH = 2;
-            const TIMESTAMP_LENGTH = 8;
             const TYPE_PREFIX = 170;
             let previousTagId = null;
             while (!r.isEnd()) {
@@ -82,7 +85,7 @@ async function parseSession(sessionReader){
                 const typeId = bufferToHex(r.read(TYPE_ID_LENGTH));
                 const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
                 const header = bufferToHex(r.read(HEADER_LENGTH));
-                const timestamp = bufferToHex(r.read(TIMESTAMP_LENGTH));
+                const timestamp = r.readTimestamp();
                 switch (typeId) {
                     case '1d':
                     case 'a0':

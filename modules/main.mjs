@@ -11,6 +11,7 @@ const get_playlists = async () => {
 };
 
 const seshGeodataCache = {};
+const seshTimestampCache = {};
 
 const getVids = async () => {
   const playlists = await get_playlists();
@@ -72,15 +73,19 @@ async function drawGeodataForDay(seshDate){
         `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ","_")}.SESSION`
     );
     const seshDataByTag = {};
+    const timeStampsByTag = {};
     seshData.map(datum => {
       if (!seshDataByTag.hasOwnProperty(datum.tagId)){
         seshDataByTag[datum.tagId] = [];
+        timeStampsByTag[datum.tagId] = [];
       }
       seshDataByTag[datum.tagId].push([datum.tagPosition.latitude, datum.tagPosition.longitude]);
+      timeStampsByTag[datum.tagId].push(datum.timestamp)
     })
     seshGeodataCache[seshDate] = seshDataByTag;
+    seshTimestampCache[seshDate] = timeStampsByTag;
   }
-  await setMapContents(seshGeodataCache[seshDate], waveMap)
+  await setMapContents(seshGeodataCache[seshDate], seshTimestampCache[seshDate], waveMap)
 }
 
 getVids();
