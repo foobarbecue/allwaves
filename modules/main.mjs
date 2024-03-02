@@ -37,8 +37,6 @@ const getVids = async () => {
   }
 };
 
-let waveMap = makeMap();
-
 const formatDescription = async (playlist_vid) => {
   const description = document.createElement("ul");
   const waves = playlist_vid.snippet.description.trim().split("\n");
@@ -88,5 +86,15 @@ async function drawGeodataForDay(seshDate){
   await setMapContents(seshGeodataCache[seshDate], seshTimestampCache[seshDate], waveMap)
 }
 
-getVids();
-drawGeodataForDay("2023 10 10");
+window.onYouTubeIframeAPIReady = ()=>{
+  console.debug('setting up youtube iframe player')
+  window.player = new YT.Player("wave-video", {
+    playerVars: {
+      playsinline: 1,
+    },
+  });
+  window.waveMap = makeMap();
+  getVids();
+  drawGeodataForDay("2023 10 10");
+}
+
