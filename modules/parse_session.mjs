@@ -91,6 +91,10 @@ async function parseSession(sessionReader){
                     case 'a0':
                     case 'a6':
                     case 'a5':
+                        // sanity check to make sure this is absolute time, because rel times are mixed in sometimes
+                        if (timestamp > 1e12){
+                            session.startTime = timestamp
+                        }
                     case 'a3':
                     case 'a4':
                         r.read(dataLength);
@@ -114,6 +118,5 @@ export async function loadAndParseSession(url){
     const fileResp = await fetch(url)
     const blob = await fileResp.blob();
     const arrayBuffer = await blob.arrayBuffer();
-    const sessionData = await parseSession(arrayBuffer);
-    return sessionData;
+    return await parseSession(arrayBuffer);
 }

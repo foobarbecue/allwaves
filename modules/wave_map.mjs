@@ -1,39 +1,6 @@
 import * as leaflet from "https://unpkg.com/leaflet/dist/leaflet-src.esm.js";
-import {marker} from "https://unpkg.com/leaflet/dist/leaflet-src.esm.js";
 
 const colorPalette = ['black', 'blue', 'green']
-
-export function makeMap(){
-    const waveMap = leaflet.map('wave-map');
-    leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(waveMap);
-    waveMap.fitWorld();
-    const presentLoc = new leaflet.marker([0,0]);
-    waveMap.addLayer(presentLoc)
-    waveMap.presentLoc = presentLoc;
-    waveMap.tagTracks = [];
-
-    // adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG , so we can update the map
-    const playerWindow = player.getIframe().contentWindow;
-    window.addEventListener("message", function(evt){
-        if (evt.source === playerWindow){
-            const data = JSON.parse(evt.data)
-            if (
-                data.event === "infoDelivery" &&
-                data.info &&
-                data.info.currentTime
-            ){
-                const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
-                const latestTime = vidTimeToUTC(trackStartTime, 5, data.info.currentTime)
-                setMarkerToTime(latestTime, waveMap)
-            }
-        }
-    })
-
-    return waveMap
-}
 
 export async function setMapContents(wptList, timestampList, waveMap){
     // clear all previously loaded tag tracks
@@ -48,7 +15,7 @@ export async function setMapContents(wptList, timestampList, waveMap){
     for (let tagId in wptList){
         const seshPolyline = leaflet.polyline(
             wptList[tagId],
-            {color: colorPalette[tagId], kindOfLayer: 'tagtrack', wptTimes: timestampList}
+            {color: colorPalette[tagId], kindOfLayer: 'tagtrack', wptTimes: timestampList[tagId]}
         );
         tagTracks.addLayer(seshPolyline);
     }
@@ -73,13 +40,29 @@ function utcToSStimestamp(trackStartTime, ssTimestamp){
     return new Date(ssTimestamp - trackStartTime)
 }
 
+function getClosestIndex(a, x) {
+    // This is a binary search, returning the index of the value just below the input x using the list a
+    var low = 0, hi = a.length-1;
+    while (hi - low > 1) {
+        var mid = Math.round((low + hi)/2);
+        if (a[mid] <= x) {
+            low = mid;
+        } else {
+            hi = mid;
+        }
+    }
+    if (a[low] == x) hi = low;
+    console.log('closest value to ' + new Date(x) + ' is ' + new Date(a[low]) + ' at index ' + low)
+    return low
+}
+
 function setMarkerToTime(time, waveMap){
 
     for (const layerId in waveMap.tagTracks._layers){
         const trackLayer = waveMap.tagTracks._layers[layerId]
         // FIXME lookup index in time list at trackLayer.options.wptTimes
-
-        waveMap.presentLoc.setLatLng(trackLayer._latlngs[0])
+        const wptTimeIdx = getClosestIndex(trackLayer.options.wptTimes, time.getTime())
+        waveMap.presentLoc.setLatLng(trackLayer._latlngs[wptTimeIdx])
     }
 }
 
@@ -110,6 +93,43 @@ function vidTitleToTrackStartTime(vidTitle){
         console.error('Video title format is incorrect.');
         return null;
     }
-
 }
 
+/**
+ * Given a video title in the format 'SS3 TRACK VIDEO 2024 02 10 080301 5', return 5, the video sequence number
+ * @param vidTitle
+ */
+function vidTitleToVidNumber(vidTitle){
+    return vidTitle.match(/.* (\d*)$/)[1]
+}
+export function makeMap(){
+    const waveMap = leaflet.map('wave-map');
+    leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(waveMap);
+    waveMap.fitWorld();
+    const presentLoc = new leaflet.marker([0,0]);
+    waveMap.addLayer(presentLoc)
+    waveMap.presentLoc = presentLoc;
+    waveMap.tagTracks = [];
+
+    // adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG , so we can update the map
+    const playerWindow = player.getIframe().contentWindow;
+    window.addEventListener("message", function(evt){
+        if (evt.source === playerWindow){
+            const data = JSON.parse(evt.data)
+            if (
+                data.event === "infoDelivery" &&
+                data.info &&
+                data.info.currentTime
+            ){
+                const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
+                const vidNumber = vidTitleToVidNumber(player.videoTitle)
+                const latestTime = vidTimeToUTC(trackStartTime, vidNumber-1, data.info.currentTime)
+                setMarkerToTime(latestTime, waveMap)
+            }
+        }
+    })
+    return waveMap
+}

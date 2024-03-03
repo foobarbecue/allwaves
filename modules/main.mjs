@@ -78,7 +78,7 @@ async function drawGeodataForDay(seshDate){
         timeStampsByTag[datum.tagId] = [];
       }
       seshDataByTag[datum.tagId].push([datum.tagPosition.latitude, datum.tagPosition.longitude]);
-      timeStampsByTag[datum.tagId].push(datum.timestamp)
+      timeStampsByTag[datum.tagId].push(datum.timestamp + seshData.startTime)
     })
     seshGeodataCache[seshDate] = seshDataByTag;
     seshTimestampCache[seshDate] = timeStampsByTag;
