@@ -90,6 +90,9 @@ async function parseSession(sessionReader){
                     case '1d':
                     case 'a0':
                     case 'a6':
+                        if (timestamp > 1e12){
+                            session.startTime = timestamp
+                        }
                     case 'a5':
                         // sanity check to make sure this is absolute time, because rel times are mixed in sometimes
                         if (timestamp > 1e12){
@@ -97,6 +100,9 @@ async function parseSession(sessionReader){
                         }
                     case 'a3':
                     case 'a4':
+                        if (timestamp > 1e12){
+                            session.startTime = timestamp
+                        }
                         r.read(dataLength);
                         break;
                     case '08':

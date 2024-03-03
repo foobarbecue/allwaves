@@ -1,6 +1,6 @@
 import * as leaflet from "https://unpkg.com/leaflet/dist/leaflet-src.esm.js";
 
-const colorPalette = ['black', 'blue', 'green']
+const colorPalette = ['black', 'blue', 'green', 'red', 'black', 'orange']
 
 export async function setMapContents(wptList, timestampList, waveMap){
     // clear all previously loaded tag tracks
