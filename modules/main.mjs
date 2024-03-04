@@ -72,13 +72,17 @@ async function drawGeodataForDay(seshDate){
     );
     const seshDataByTag = {};
     const timeStampsByTag = {};
-    seshData.map(datum => {
+    seshData.locations.map(datum => {
       if (!seshDataByTag.hasOwnProperty(datum.tagId)){
         seshDataByTag[datum.tagId] = [];
         timeStampsByTag[datum.tagId] = [];
       }
       seshDataByTag[datum.tagId].push([datum.tagPosition.latitude, datum.tagPosition.longitude]);
-      timeStampsByTag[datum.tagId].push(datum.timestamp + seshData.startTime)
+      let timeAdj = document.querySelector("#time-adj").value;
+      timeAdj = timeAdj ? timeAdj : 0;
+      timeStampsByTag[datum.tagId].push(
+          seshData.absTimestamps.slice(-1)[0] + datum.timestamp - seshData.locations[0].timestamp + timeAdj * 1000
+      )
     })
     seshGeodataCache[seshDate] = seshDataByTag;
     seshTimestampCache[seshDate] = timeStampsByTag;
