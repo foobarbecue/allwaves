@@ -105,7 +105,7 @@ function vidTitleToVidNumber(vidTitle){
 export function makeMap(){
     const waveMap = leaflet.map('wave-map');
     leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
+        maxZoom: 30,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(waveMap);
     waveMap.fitWorld();

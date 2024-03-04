@@ -70,7 +70,7 @@ class ByteReader {
 }
 
 async function parseSession(sessionReader){
-        const session = [];
+        const session = {locations:[], absTimestamps:[]};
         const r = new ByteReader(sessionReader);
         const enc = new TextDecoder();
             assert(enc.decode(r.read(4)) === 'SOLO', 'Invalid session file. Expected file content to start with "SOLO"');
@@ -86,32 +86,29 @@ async function parseSession(sessionReader){
                 const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
                 const header = bufferToHex(r.read(HEADER_LENGTH));
                 const timestamp = r.readTimestamp();
+                // Check for absolute timestamps. These are present on a6, a5, and a4
+                if (timestamp > 1e12){
+                    session.absTimestamps.push(timestamp)
+                }
                 switch (typeId) {
                     case '1d':
                     case 'a0':
                     case 'a6':
-                        if (timestamp > 1e12){
-                            session.startTime = timestamp
-                        }
                     case 'a5':
-                        // sanity check to make sure this is absolute time, because rel times are mixed in sometimes
-                        if (timestamp > 1e12){
-                            session.startTime = timestamp
-                        }
                     case 'a3':
                     case 'a4':
-                        if (timestamp > 1e12){
-                            session.startTime = timestamp
-                        }
                         r.read(dataLength);
                         break;
                     case '08':
-                        const tagId = r.readByte();
-                        const basePosition = r.readGpsLocation();
-                        const tagPosition = r.readGpsLocation();
-                        session.push({tagId, basePosition, tagPosition, timestamp})
-                        r.read(10);
-                        previousTagId = tagId;
+                        // ignore it if it has an absolute timestamp
+                        if (timestamp < 1e12){
+                            const tagId = r.readByte();
+                            const basePosition = r.readGpsLocation();
+                            const tagPosition = r.readGpsLocation();
+                            session.locations.push({tagId, basePosition, tagPosition, timestamp})
+                            r.read(10);
+                            previousTagId = tagId;
+                        }
                         break;
                     default:
                         throw `Unexpected file content. Unknown type ID: ${typeId}`;

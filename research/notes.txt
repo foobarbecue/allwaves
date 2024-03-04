@@ -1,0 +1,50 @@
+2024-03-02 test 1
+timestamps in GPS start at 57872 and end at 267256. This is 03:29.38 minutes
+The video SS3_TRACK_VIDEO_2024_03_02_174910-1.MP4 is 3:15.03 minutes long.
+The directory is called Track_2024_03_03_014813. This seems to be a base boot time in UTC.
+Initial timestamps in the session file were 2024-03-03T01:48:13.484Z, which matches the directory
+
+maybe the time is time since you turned the tag on...
+
+2024-03-02 test 2
+-----------------
+turning on srdtrainers 8 at 21:10:56
+turning on base at 21:24:00
+start tracking at 21:27:00
+
+2024-03-03 test 1
+-----------------
+test:
+ - tag 8 turned on at 05:45:00
+ - camera turn on at 05:54:00
+ - tracking start buttons pressed at 05:58:00
+results:
+ - session file is SS3_EDIT_2024_03_03_055739.SESSION (presumably PST)
+ - video is SS3_TRACK_VIDEO_2024_03_03_055819-1.MP4, 2:15 long
+ - initial timestamp in sessionfile is 2024-03-03 05:57:47 PST
+ - sessionfile contains 1044 GPS packets, starting with 224856 and ending with 382576 (2 mins 37.72 seconds)
+interpretation:
+ - sessionfile gps packet timestamps appear to represent milliseconds since camera turned on
+ - sessionfile start time seems to roughly represent tracking start time, but doesn't match video start
+
+End time of the video should be 5:58:19 + 2:15 = 06:00:34 PST = 1709474434000
+1709474434000 - 382576 = 1709474051424
+Trying that, map is ahead of video
+After trial and error, I see the correct time to add to the tag timestamps is 1709474068424
+
+new plan: subtract initial tag rel timestamp, add abs timestamp from 0xA3
+
+
+2024-03-03 test 2
+-----------------
+tag turned on 11:30
+base turned on 11:35:00
+
+2024-03-03 test 3
+-----------------
+base turn on 14:39
+tag turn on 14:42
+tracking start 14:50:03 (calibration start :03, finished :16)
+initial timestamps are 14:49:27 (Why???) instead of 14:50:16
+time matched up with:
+ last initial timestamp + rel timestamp - first rel timestamp + 45000(fudge factor, probably difference between opening video screen and starting tracking)
