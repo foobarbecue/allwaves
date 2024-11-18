@@ -1,0 +1,20 @@
+#wave-map:not(.collapsed):not(.fullheight), #wave-video:not(.collapsed):not(.fullheight) {
+    height: 46%;
+    width: 100%;
+}
+
+.collapsed {
+    display: none;
+}
+
+.fullheight {
+    height: 92%;
+    width: 100%;
+}
+
+.titlebar {
+    float: right;
+    clear: both;
+    border: thin black solid;
+    border-bottom: none;
+}

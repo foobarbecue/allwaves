@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin="" />
+    <link rel="stylesheet" href="main.css" />
     <script type="module" src="modules/main.mjs" defer></script>
     <div><h1>Always allwav.es</h1></div>
     <div style="position:absolute; top:0; right:0; margin: 1em">
@@ -22,9 +23,15 @@
                 </ul>
             </div>
             <div id="wave-display" style="flex-grow: 1; height: 100%">
-                <div id="wave-video" style="height:49.5%; width:100%">
+                <div id="wave-video-titlebar" class="titlebar">
+                    toggle video
                 </div>
-                <div id="wave-map" style="height:49.5%; width:100%">
+                <div id="wave-video">
+                </div>
+                <div id="wave-map-titlebar" class="titlebar">
+                    toggle map
+                </div>
+                <div id="wave-map">
                 </div>
             </div>
         </div>

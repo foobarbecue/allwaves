@@ -102,3 +102,14 @@ window.onYouTubeIframeAPIReady = ()=>{
   drawGeodataForDay("2023 10 10");
 }
 
+const toggleMapCollapse = () => {
+  document.getElementById("wave-map").classList.toggle("collapsed");
+  document.getElementById("wave-video").classList.toggle("fullheight");
+}
+
+const toggleVideoCollapse = () => {
+  document.getElementById("wave-video").classList.toggle("collapsed");
+  document.getElementById("wave-map").classList.toggle("fullheight");
+}
+document.getElementById("wave-map-titlebar").onclick = toggleMapCollapse;
+document.getElementById("wave-video-titlebar").onclick = toggleVideoCollapse;
