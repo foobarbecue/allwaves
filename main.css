@@ -18,3 +18,7 @@
     border: thin black solid;
     border-bottom: none;
 }
+ #wave-list:not(.collapsed) {
+     width: 25em;
+     overflow-y: scroll;
+ }

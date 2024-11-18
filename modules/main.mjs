@@ -111,5 +111,10 @@ const toggleVideoCollapse = () => {
   document.getElementById("wave-video").classList.toggle("collapsed");
   document.getElementById("wave-map").classList.toggle("fullheight");
 }
+
+const toggleListCollapse = () => {
+  document.getElementById("wave-list").classList.toggle("collapsed");
+}
 document.getElementById("wave-map-titlebar").onclick = toggleMapCollapse;
 document.getElementById("wave-video-titlebar").onclick = toggleVideoCollapse;
+document.getElementById("wave-list-titlebar").onclick = toggleListCollapse;
