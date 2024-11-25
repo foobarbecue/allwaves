@@ -22,3 +22,13 @@
      width: 25em;
      overflow-y: scroll;
  }
+#wave-list-titlebar-container {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+}
+#wave-list-titlebar {
+    float: left;
+    clear: both;
+    border: thin black solid;
+    border-left: none;
+}
