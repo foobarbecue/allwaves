@@ -15,7 +15,11 @@ for (seshFilePath of seshFileSdPaths) {
     const symlinkName = destFilePath.replace(/\\?orig/,'').replace(/_\d{6}/,'')
 
     //TODO handle multiple sessions on same day
-    console.log(`Creating symlink ${symlinkName} pointed to ${destFilePath}`)
-    fs.symlinkSync(destFilePath, symlinkName)
+    try {
+        console.log(`Creating symlink ${symlinkName} pointed to ${destFilePath}`)
+        fs.symlinkSync(destFilePath, symlinkName)
+    } catch (err) {
+        console.error(err)
+    }
 }
 
