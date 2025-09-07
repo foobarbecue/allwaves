@@ -18,26 +18,32 @@ const tagLocnsUTM = sesh.locations.map(
 
 const moveDists = [];
 const moveDurations = [];
+const moveSpeeds = [];
 for (let ind=0; ind < tagLocnsUTM.length-1; ind++) {
     moveDists.push(
         Math.sqrt((tagLocnsUTM[ind + 1].x - tagLocnsUTM[ind].x) ** 2 + (tagLocnsUTM[ind + 1].y - tagLocnsUTM[ind].y) ** 2)
-    )
+    );
     moveDurations.push(
-        sesh.locations.timestamp[ind+1] = sesh.locations.timestamp[ind]
-    )
+        sesh.locations[ind+1].timestamp - sesh.locations[ind+1].timestamp
+    );
     moveSpeeds.push(
         moveDurations[ind] / moveDists[ind]
-    )
+    );
 }
 
-plot(
-[    {
+const distsPlot = [{
         y: moveDists,
         x: [...Array(moveDists.length).keys()],
         type: 'scatter'
     }]
-)
 
+const locnPlot = [{
+        y: tagLocnsUTM.map(locn => locn.y),
+        x: tagLocnsUTM.map(locn => locn.x)
+}]
+
+plot(distsPlot)
+plot(locnPlot)
 // console.log(transform.forward(seshDf.select(tagPosition,0)));
 // Calculate speed
 
