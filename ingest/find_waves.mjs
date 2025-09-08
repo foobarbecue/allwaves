@@ -20,10 +20,10 @@ const plotTag = (tagId, sesh)=> {
             Math.sqrt((tagLocnsUTM[ind + 1].x - tagLocnsUTM[ind].x) ** 2 + (tagLocnsUTM[ind + 1].y - tagLocnsUTM[ind].y) ** 2)
         );
         moveDurations.push(
-            tagSesh[ind + 1].timestamp - tagSesh[ind + 1].timestamp
+            tagSesh[ind + 1].timestamp - tagSesh[ind].timestamp
         );
         moveSpeeds.push(
-            moveDurations[ind] / moveDists[ind]
+            moveDists[ind] / (moveDurations[ind] * 1000)
         );
     }
 
