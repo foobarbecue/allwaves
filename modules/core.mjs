@@ -10,6 +10,12 @@ export async function drawGeodataForDay(seshDate, seshGeodataCache, seshTimestam
         const seshData = await loadAndParseSession(
             `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ","_")}.SESSION`
         );
+        if (!seshData){
+            document.querySelector("#wave-map-title").textContent = `Mapping: no data for ${seshDate}`;
+            return
+        } else {
+            document.querySelector("#wave-map-title").textContent = `Mapping: ${seshDate}`;
+        }
         const seshDataByTag = {};
         const timeStampsByTag = {};
         seshData.locations.map(datum => {

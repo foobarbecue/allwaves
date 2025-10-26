@@ -1,5 +1,4 @@
 import {makeMap} from "./wave_map.mjs";
-import {drawGeodataForDay} from "./core.mjs";
 
 const toggleMapCollapse = () => {
     document.getElementById("wave-map").classList.toggle("collapsed");
@@ -16,9 +15,9 @@ const toggleListCollapse = () => {
 }
 
 export function setupUiEvtHdlrs() {
-    document.getElementById("wave-map-titlebar").onclick = toggleMapCollapse;
-    document.getElementById("wave-video-titlebar").onclick = toggleVideoCollapse;
-    document.getElementById("wave-list-titlebar").onclick = toggleListCollapse;
+    document.getElementById("wave-map-togglebutton").onclick = toggleMapCollapse;
+    document.getElementById("wave-video-togglebutton").onclick = toggleVideoCollapse;
+    document.getElementById("wave-list-togglebutton").onclick = toggleListCollapse;
     window.onYouTubeIframeAPIReady = ()=>{
         console.debug('setting up youtube iframe player')
         window.player = new YT.Player("wave-video", {

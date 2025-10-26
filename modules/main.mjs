@@ -1,6 +1,7 @@
-import {makeMap, setMapContents} from "./wave_map.mjs";
 import {setupUiEvtHdlrs} from "./ui.mjs";
 import {drawGeodataForDay} from "./core.mjs";
+import {seshTimestampCache} from "./core.mjs";
+import {seshGeodataCache} from "./core.mjs";
 
 // Yeah, I know this is an unsecured API key. Sooner or later I suppose some miscreant will max out my requests on it. Shrug.
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
@@ -54,9 +55,10 @@ const formatDescription = async (playlist_vid) => {
       const mins = Number(wave_time_re[1]);
       const secs = Number(wave_time_re[2]);
       const tot_secs = mins * 60 + secs;
+      document.querySelector("#wave-video-title").textContent = `Playing video: ${playlist_vid.snippet.title}`;
       window.player.loadVideoById(playlist_vid.snippet.resourceId.videoId, tot_secs);
       drawGeodataForDay(
-          (/\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title))[0]
+          (/\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title))[0], seshGeodataCache, seshTimestampCache
       );
     };
     description.appendChild(wave_li);
@@ -69,4 +71,4 @@ const formatDescription = async (playlist_vid) => {
 
 getVids();
 setupUiEvtHdlrs();
-drawGeodataForDay("2025 08 17");
+drawGeodataForDay("2025 08 17", seshGeodataCache, seshTimestampCache);

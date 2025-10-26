@@ -12,9 +12,7 @@
     width: 100%;
 }
 
-.titlebar {
-    float: right;
-    clear: both;
+.togglebutton-right {
     border: thin black solid;
     border-bottom: none;
 }
@@ -26,9 +24,13 @@
     writing-mode: vertical-rl;
     text-orientation: mixed;
 }
-#wave-list-titlebar {
+#wave-list-togglebutton {
     float: left;
     clear: both;
     border: thin black solid;
     border-left: none;
+}
+#wave-map-titlebar, #wave-video-titlebar{
+    display: flex;
+    justify-content: space-between;
 }
