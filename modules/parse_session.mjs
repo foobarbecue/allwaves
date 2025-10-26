@@ -69,7 +69,7 @@ class ByteReader {
     }
 }
 
-async function parseSession(sessionReader){
+export async function parseSession(sessionReader){
         const session = {locations:[], absTimestamps:[]};
         const r = new ByteReader(sessionReader);
         const enc = new TextDecoder();
