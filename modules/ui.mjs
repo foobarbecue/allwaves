@@ -2,12 +2,10 @@ import {makeMap} from "./wave_map.mjs";
 
 const toggleMapCollapse = () => {
     document.getElementById("wave-map").classList.toggle("collapsed");
-    document.getElementById("wave-video").classList.toggle("fullheight");
 }
 
 const toggleVideoCollapse = () => {
     document.getElementById("wave-video").classList.toggle("collapsed");
-    document.getElementById("wave-map").classList.toggle("fullheight");
 }
 
 const toggleListCollapse = () => {

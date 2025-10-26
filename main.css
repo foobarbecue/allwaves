@@ -1,15 +1,10 @@
-#wave-map:not(.collapsed):not(.fullheight), #wave-video:not(.collapsed):not(.fullheight) {
-    height: 46%;
+#wave-map, #wave-video {
+    height: 100%;
     width: 100%;
 }
 
 .collapsed {
     display: none;
-}
-
-.fullheight {
-    height: 92%;
-    width: 100%;
 }
 
 .togglebutton-right {
@@ -33,4 +28,10 @@
 #wave-map-titlebar, #wave-video-titlebar{
     display: flex;
     justify-content: space-between;
+}
+#wave-display{
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
