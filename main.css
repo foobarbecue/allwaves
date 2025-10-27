@@ -1,4 +1,4 @@
-#wave-map, #wave-video {
+#wave-map, #wave-video, #wave-plot {
     height: 100%;
     width: 100%;
 }
@@ -25,7 +25,7 @@
     border: thin black solid;
     border-left: none;
 }
-#wave-map-titlebar, #wave-video-titlebar{
+#wave-map-titlebar, #wave-video-titlebar, #wave-plot-titlebar{
     display: flex;
     justify-content: space-between;
 }
