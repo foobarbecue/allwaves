@@ -12,9 +12,15 @@ export async function drawGeodataForDay(seshDate, seshGeodataCache, seshTimestam
         );
         if (!seshData){
             document.querySelector("#wave-map-title").textContent = `Mapping: no data for ${seshDate}`;
+            document.getElementById("wave-map").classList.add("collapsed")
+            document.getElementById("wave-plot").classList.add("collapsed")
             return
         } else {
             document.querySelector("#wave-map-title").textContent = `Mapping: ${seshDate}`;
+            // I'm not sure if we want to automatically show this when it's available
+            // or if it should be per user request
+            // document.getElementById("wave-map").classList.remove("collapsed")
+            // document.getElementById("wave-plot").classList.remove("collapsed")
         }
         const seshDataByTag = {};
         const timeStampsByTag = {};
