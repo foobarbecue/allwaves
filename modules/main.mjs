@@ -1,5 +1,9 @@
-import { loadAndParseSession } from "./parse_session.mjs"
-import {makeMap, setMapContents} from "./wave_map.mjs";
+import {setupUiEvtHdlrs} from "./ui.mjs";
+import {drawGeodataForDay} from "./core.mjs";
+import {seshTimestampCache} from "./core.mjs";
+import {seshGeodataCache} from "./core.mjs";
+import {plotSession} from "./plot.mjs";
+
 // Yeah, I know this is an unsecured API key. Sooner or later I suppose some miscreant will max out my requests on it. Shrug.
 const api_key = "AIzaSyA8bV-BGblDIk6m61vjmbI5ugf6gBSKnO0";
 
@@ -10,10 +14,9 @@ const get_playlists = async () => {
   return await resp.json();
 };
 
-const seshGeodataCache = {};
-const seshTimestampCache = {};
-
 const getVids = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const seshDate = urlParams.get('seshDate')
   const playlists = await get_playlists();
   for (const playlist of playlists.items) {
     const resp = await fetch(
@@ -53,10 +56,11 @@ const formatDescription = async (playlist_vid) => {
       const mins = Number(wave_time_re[1]);
       const secs = Number(wave_time_re[2]);
       const tot_secs = mins * 60 + secs;
+      const seshDate = /\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title)[0]
+      document.querySelector("#wave-video-title").textContent = `Playing video: ${playlist_vid.snippet.title}`;
       window.player.loadVideoById(playlist_vid.snippet.resourceId.videoId, tot_secs);
-      drawGeodataForDay(
-          (/\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title))[0]
-      );
+      drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
+      plotSession(seshDate);
     };
     description.appendChild(wave_li);
 
@@ -64,57 +68,7 @@ const formatDescription = async (playlist_vid) => {
   return description;
 };
 
-async function drawGeodataForDay(seshDate){
-  // seshDate should be a string like "2023 08 20"
-  if (! seshGeodataCache.hasOwnProperty(seshDate)){
-    const seshData = await loadAndParseSession(
-        `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ","_")}.SESSION`
-    );
-    const seshDataByTag = {};
-    const timeStampsByTag = {};
-    seshData.locations.map(datum => {
-      if (!seshDataByTag.hasOwnProperty(datum.tagId)){
-        seshDataByTag[datum.tagId] = [];
-        timeStampsByTag[datum.tagId] = [];
-      }
-      seshDataByTag[datum.tagId].push([datum.tagPosition.latitude, datum.tagPosition.longitude]);
-      let timeAdj = document.querySelector("#time-adj").value;
-      timeAdj = timeAdj ? timeAdj : 0;
-      timeStampsByTag[datum.tagId].push(
-          seshData.absTimestamps.slice(-1)[0] + datum.timestamp - seshData.locations[0].timestamp + timeAdj * 1000
-      )
-    })
-    seshGeodataCache[seshDate] = seshDataByTag;
-    seshTimestampCache[seshDate] = timeStampsByTag;
-  }
-  await setMapContents(seshGeodataCache[seshDate], seshTimestampCache[seshDate], waveMap)
-}
 
-window.onYouTubeIframeAPIReady = ()=>{
-  console.debug('setting up youtube iframe player')
-  window.player = new YT.Player("wave-video", {
-    playerVars: {
-      playsinline: 1,
-    },
-  });
-  window.waveMap = makeMap();
-  getVids();
-  drawGeodataForDay("2023 10 10");
-}
 
-const toggleMapCollapse = () => {
-  document.getElementById("wave-map").classList.toggle("collapsed");
-  document.getElementById("wave-video").classList.toggle("fullheight");
-}
-
-const toggleVideoCollapse = () => {
-  document.getElementById("wave-video").classList.toggle("collapsed");
-  document.getElementById("wave-map").classList.toggle("fullheight");
-}
-
-const toggleListCollapse = () => {
-  document.getElementById("wave-list").classList.toggle("collapsed");
-}
-document.getElementById("wave-map-titlebar").onclick = toggleMapCollapse;
-document.getElementById("wave-video-titlebar").onclick = toggleVideoCollapse;
-document.getElementById("wave-list-titlebar").onclick = toggleListCollapse;
+getVids();
+setupUiEvtHdlrs();

@@ -1,5 +1,5 @@
-#wave-map:not(.collapsed):not(.fullheight), #wave-video:not(.collapsed):not(.fullheight) {
-    height: 46%;
+#wave-map, #wave-video, #wave-plot {
+    height: 100%;
     width: 100%;
 }
 
@@ -7,14 +7,7 @@
     display: none;
 }
 
-.fullheight {
-    height: 92%;
-    width: 100%;
-}
-
-.titlebar {
-    float: right;
-    clear: both;
+.togglebutton-right {
     border: thin black solid;
     border-bottom: none;
 }
@@ -26,9 +19,19 @@
     writing-mode: vertical-rl;
     text-orientation: mixed;
 }
-#wave-list-titlebar {
+#wave-list-togglebutton {
     float: left;
     clear: both;
     border: thin black solid;
     border-left: none;
+}
+#wave-map-titlebar, #wave-video-titlebar, #wave-plot-titlebar{
+    display: flex;
+    justify-content: space-between;
+}
+#wave-display{
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }

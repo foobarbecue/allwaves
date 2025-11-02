@@ -69,7 +69,7 @@ class ByteReader {
     }
 }
 
-async function parseSession(sessionReader){
+export async function parseSession(sessionReader){
         const session = {locations:[], absTimestamps:[]};
         const r = new ByteReader(sessionReader);
         const enc = new TextDecoder();
@@ -119,7 +119,10 @@ async function parseSession(sessionReader){
 
 export async function loadAndParseSession(url){
     const fileResp = await fetch(url)
-    const blob = await fileResp.blob();
-    const arrayBuffer = await blob.arrayBuffer();
-    return await parseSession(arrayBuffer);
+    if (fileResp.ok){
+        const blob = await fileResp.blob();
+        const arrayBuffer = await blob.arrayBuffer();
+        return await parseSession(arrayBuffer);
+    }
+    return false
 }
