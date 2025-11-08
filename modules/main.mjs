@@ -31,7 +31,17 @@ const getVids = async () => {
       document.querySelector("#wave-list>ul").appendChild(pl_li);
       for (const vid of playlist_itemlist.items) {
         const vid_li = document.createElement("li");
-        vid_li.textContent = vid.snippet.title;
+        const vid_li_a = document.createElement("a");
+        vid_li_a.textContent = vid.snippet.title;
+        vid_li_a.href = "javascript:;";
+        vid_li.onclick = () => {
+          const seshDate = /\d{4} \d\d \d\d/.exec(vid.snippet.title)[0]
+          document.querySelector("#wave-video-title").textContent = `Playing video: ${vid.snippet.title}`;
+          window.player.loadVideoById(vid.snippet.resourceId.videoId);
+          drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
+          plotSession(seshDate);
+        }
+        vid_li.appendChild(vid_li_a)
         pl_li.querySelector("ul").appendChild(vid_li);
         const desc_ul = await formatDescription(vid);
         vid_li.appendChild(desc_ul);
