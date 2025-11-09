@@ -1,3 +1,9 @@
+body {
+    background-color: Canvas;
+    color: CanvasText;
+    color-scheme: light dark;
+}
+
 #wave-map, #wave-video, #wave-plot {
     height: 100%;
     width: 100%;
@@ -39,4 +45,10 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+@media (prefers-color-scheme: dark) {
+    #wave-plot {
+        filter: invert(100%) hue-rotate(180deg);
+    }
 }
