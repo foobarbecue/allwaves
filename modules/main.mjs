@@ -1,4 +1,4 @@
-import {setupUiEvtHdlrs} from "./ui.mjs";
+import {setupTimechangeEvtHdlr, setupUiEvtHdlrs} from "./ui.mjs";
 import {loadAndParseSession} from "./parse_session.mjs";
 import {makeMap, setMapContents, setMarkerToTime} from "./wave_map.mjs";
 import {plotSession, setTimebarToTime} from "./plot.mjs";
@@ -118,33 +118,6 @@ const formatDescription = async (playlist_vid) => {
     return description;
 };
 
-const setupTimechangeEvtHdlr = ()=>{
-    // adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG , so we can update the map
-    const playerWindow = window.player.getIframe().contentWindow;
-    window.addEventListener("message", function (evt) {
-        if (evt.source === playerWindow) {
-            const data = JSON.parse(evt.data)
-            if (
-                data.event === "infoDelivery" &&
-                data.info &&
-                data.info.currentTime
-            ) {
-                const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
-                const vidNumber = vidTitleToVidNumber(player.videoTitle)
-                let timeAdj = document.querySelector("#time-adj").value;
-                timeAdj = timeAdj ? Number(timeAdj) : 0;
-                const adjustedYTtime = data.info.currentTime + timeAdj
-                const latestTime = vidTimeToUTC(trackStartTime, vidNumber - 1, adjustedYTtime)
-                setMarkerToTime(latestTime, waveMap)
-                // inconsistent signatures between ^ and v . Entire app needs a (OO?) rewrite X-D
-                const timestampListPerTag = seshTimestampCache[seshDate];
-                for (const tagId in timestampListPerTag) {
-                    setTimebarToTime(seshTimestampCache[seshDate][tagId], latestTime)
-                }
-            }
-        }
-    })
-}
 
 window.onYouTubeIframeAPIReady = () => {
     console.debug('setting up youtube iframe player')
