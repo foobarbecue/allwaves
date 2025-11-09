@@ -86,7 +86,7 @@ export async function parseSession(sessionReader){
                 const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
                 const header = bufferToHex(r.read(HEADER_LENGTH));
                 const timestamp = r.readTimestamp();
-                // Check for absolute timestamps. These are present on a6, a5, and a4
+                // Check for absolute timestamps. These are present on a4, a5, and a6
                 if (timestamp > 1e12){
                     session.absTimestamps.push(timestamp)
                 }

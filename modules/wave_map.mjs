@@ -10,19 +10,28 @@ export async function setMapContents(wptList, timestampList, waveMap){
         }
     }
 
-    // add tag tracks
+    // add tag track and time highlight layers
     const tagTracks = leaflet.featureGroup();
+    const timeHighlights = leaflet.featureGroup();
     for (let tagId in wptList){
         const seshPolyline = leaflet.polyline(
             wptList[tagId],
             {color: colorPalette[tagId], kindOfLayer: 'tagtrack', wptTimes: timestampList[tagId]}
         );
         tagTracks.addLayer(seshPolyline);
+        const highlightPolyline = leaflet.polyline(
+            wptList[tagId].slice(0,100),
+            {color: 'red', kindOfLayer: 'timehighlight'}
+        );
+        timeHighlights.addLayer(highlightPolyline)
+        // store a reference to the highlight layer in the tag track layer
+        seshPolyline.options['timeHighlightLayer'] = highlightPolyline
     }
     tagTracks.addTo(waveMap);
     waveMap.tagTracks = tagTracks;
-    // leaflet.control.layers().addTo(waveMap);
-    waveMap.fitBounds(tagTracks.getBounds());
+    timeHighlights.addTo(waveMap)
+    waveMap.timeHighlights = timeHighlights
+    waveMap.fitBounds(tagTracks.getBounds())
 }
 
 /**
@@ -57,12 +66,16 @@ function getClosestIndex(a, x) {
 }
 
 function setMarkerToTime(time, waveMap){
-
     for (const layerId in waveMap.tagTracks._layers){
         const trackLayer = waveMap.tagTracks._layers[layerId]
-        // FIXME lookup index in time list at trackLayer.options.wptTimes
         const wptTimeIdx = getClosestIndex(trackLayer.options.wptTimes, time.getTime())
         waveMap.presentLoc.setLatLng(trackLayer._latlngs[wptTimeIdx])
+
+        // also highlight a section of the track before and after the current time
+        const startInd = wptTimeIdx - 100;
+        const endInd = wptTimeIdx + 100;
+        const highlightedLatLngs = trackLayer._latlngs.slice(startInd, endInd)
+        trackLayer.options.timeHighlightLayer.setLatLngs(highlightedLatLngs)
     }
 }
 
