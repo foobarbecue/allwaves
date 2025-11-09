@@ -34,7 +34,7 @@ const getVids = async () => {
                 const vid_li_a = document.createElement("a");
                 vid_li_a.textContent = vid.snippet.title;
                 vid_li_a.href = "javascript:;";
-                vid_li.onclick = () => {
+                vid_li_a.onclick = () => {
                     const seshDate = /\d{4} \d\d \d\d/.exec(vid.snippet.title)[0]
                     document.querySelector("#wave-video-title").textContent = `Playing video: ${vid.snippet.title}`;
                     window.player.loadVideoById(vid.snippet.resourceId.videoId);
