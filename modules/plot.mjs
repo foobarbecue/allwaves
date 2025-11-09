@@ -55,3 +55,23 @@ export async function plotSession(seshDate) {
 
     await Plotly.newPlot('wave-plot', locnPlot)
 }
+
+export function setTimebarPosition(index){
+    if (index === null || index === undefined || Number.isNaN(Number(index))) {
+        // Clear any vertical line
+        Plotly.relayout(document.getElementById('wave-plot'), { shapes: [] })
+        return
+    }
+
+    const x = Number(index)
+    const timebar = {
+        type: 'line',
+        x0: x,
+        x1: x,
+        yref: 'paper',
+        y0: 0,
+        y1: 1,
+        line: { color: 'red', width: 2}
+    }
+    Plotly.relayout(graphDiv, { shapes: [timebar] })
+}
