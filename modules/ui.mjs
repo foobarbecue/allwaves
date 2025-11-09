@@ -1,5 +1,3 @@
-import {makeMap} from "./wave_map.mjs";
-
 const toggleMapCollapse = () => {
     document.getElementById("wave-map").classList.toggle("collapsed");
 }
@@ -25,13 +23,4 @@ export function setupUiEvtHdlrs() {
         document.getElementById("time-adj-disp").innerText = ev.target.value;
     }
 
-    window.onYouTubeIframeAPIReady = () => {
-        console.debug('setting up youtube iframe player')
-        window.player = new YT.Player("wave-video", {
-            playerVars: {
-                playsinline: 1,
-            },
-        });
-        window.waveMap = makeMap();
-    }
 }

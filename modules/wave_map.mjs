@@ -65,7 +65,7 @@ function getClosestIndex(a, x) {
     return low
 }
 
-function setMarkerToTime(time, waveMap) {
+export function setMarkerToTime(time, waveMap) {
     for (const layerId in waveMap.tagTracks._layers) {
         const trackLayer = waveMap.tagTracks._layers[layerId]
         const wptTimeIdx = getClosestIndex(trackLayer.options.wptTimes, time.getTime())
@@ -127,26 +127,5 @@ export function makeMap() {
     waveMap.addLayer(presentLoc)
     waveMap.presentLoc = presentLoc;
     waveMap.tagTracks = [];
-
-    // adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG , so we can update the map
-    const playerWindow = player.getIframe().contentWindow;
-    window.addEventListener("message", function (evt) {
-        if (evt.source === playerWindow) {
-            const data = JSON.parse(evt.data)
-            if (
-                data.event === "infoDelivery" &&
-                data.info &&
-                data.info.currentTime
-            ) {
-                const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
-                const vidNumber = vidTitleToVidNumber(player.videoTitle)
-                let timeAdj = document.querySelector("#time-adj").value;
-                timeAdj = timeAdj ? Number(timeAdj) : 0;
-                const adjustedYTtime = data.info.currentTime + timeAdj
-                const latestTime = vidTimeToUTC(trackStartTime, vidNumber - 1, adjustedYTtime)
-                setMarkerToTime(latestTime, waveMap)
-            }
-        }
-    })
     return waveMap
 }
