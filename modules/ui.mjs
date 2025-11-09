@@ -1,6 +1,9 @@
 import {setTimebarToTime} from "./plot.mjs";
 import {vidTimeToUTC, vidTitleToTrackStartTime, vidTitleToVidNumber} from "./math.mjs";
 import {setMarkerToTime} from "./wave_map.mjs"
+import {seshTimestampCache, seshDate} from "./data.js";
+
+
 const toggleMapCollapse = () => {
     document.getElementById("wave-map").classList.toggle("collapsed");
 }
@@ -64,6 +67,7 @@ export function setupUiEvtHdlrs() {
     document.getElementById("wave-plot-togglebutton").onclick = togglePlotCollapse;
     document.getElementById("time-adj").oninput = (ev)=>{
         document.getElementById("time-adj-disp").innerText = ev.target.value;
+        timechangeEvtHdlr(window.player.getCurrentTime());
     }
 
 }

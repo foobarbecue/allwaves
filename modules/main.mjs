@@ -2,10 +2,7 @@ import {setupTimechangeEvtHdlr, setupUiEvtHdlrs} from "./ui.mjs";
 import {loadAndParseSession} from "./parse_session.mjs";
 import {makeMap, setMapContents} from "./wave_map.mjs";
 import {plotSession} from "./plot.mjs";
-
-export const seshGeodataCache = {};
-export const seshTimestampCache = {};
-export let seshDate;
+import {seshGeodataCache, seshTimestampCache, seshDate, setSeshDate} from "./data.js";
 
 export async function drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache) {
     // seshDate should be a string like "2023 08 20"
@@ -74,7 +71,7 @@ const getVids = async () => {
                 vid_li_a.textContent = vid.snippet.title;
                 vid_li_a.href = "javascript:;";
                 vid_li_a.onclick = () => {
-                    seshDate = /\d{4} \d\d \d\d/.exec(vid.snippet.title)[0]
+                    setSeshDate(/\d{4} \d\d \d\d/.exec(vid.snippet.title)[0])
                     document.querySelector("#wave-video-title").textContent = `Playing video: ${vid.snippet.title}`;
                     window.player.loadVideoById(vid.snippet.resourceId.videoId);
                     drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
