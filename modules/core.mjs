@@ -4,13 +4,13 @@ import {setMapContents} from "./wave_map.mjs";
 export const seshGeodataCache = {};
 export const seshTimestampCache = {};
 
-export async function drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache){
+export async function drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache) {
     // seshDate should be a string like "2023 08 20"
-    if (! seshGeodataCache.hasOwnProperty(seshDate)){
+    if (!seshGeodataCache.hasOwnProperty(seshDate)) {
         const seshData = await loadAndParseSession(
-            `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ","_")}.SESSION`
+            `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ", "_")}.SESSION`
         );
-        if (!seshData){
+        if (!seshData) {
             document.querySelector("#wave-map-title").textContent = `Mapping: no data for ${seshDate}`;
             document.getElementById("wave-map").classList.add("collapsed")
             document.getElementById("wave-plot").classList.add("collapsed")
@@ -25,7 +25,7 @@ export async function drawGeodataForDay(seshDate, seshGeodataCache, seshTimestam
         const seshDataByTag = {};
         const timeStampsByTag = {};
         seshData.locations.map(datum => {
-            if (!seshDataByTag.hasOwnProperty(datum.tagId)){
+            if (!seshDataByTag.hasOwnProperty(datum.tagId)) {
                 seshDataByTag[datum.tagId] = [];
                 timeStampsByTag[datum.tagId] = [];
             }

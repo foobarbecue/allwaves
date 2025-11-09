@@ -2,10 +2,10 @@ import * as leaflet from "https://unpkg.com/leaflet/dist/leaflet-src.esm.js";
 
 const colorPalette = ['black', 'blue', 'green', 'red', 'black', 'orange']
 
-export async function setMapContents(wptList, timestampList, waveMap){
+export async function setMapContents(wptList, timestampList, waveMap) {
     // clear all previously loaded tag tracks
-    for (let lyrId in waveMap._layers){
-        if (waveMap._layers[lyrId]?.options?.kindOfLayer == 'tagtrack'){
+    for (let lyrId in waveMap._layers) {
+        if (waveMap._layers[lyrId]?.options?.kindOfLayer == 'tagtrack') {
             waveMap.removeLayer(waveMap._layers[lyrId])
         }
     }
@@ -13,14 +13,14 @@ export async function setMapContents(wptList, timestampList, waveMap){
     // add tag track and time highlight layers
     const tagTracks = leaflet.featureGroup();
     const timeHighlights = leaflet.featureGroup();
-    for (let tagId in wptList){
+    for (let tagId in wptList) {
         const seshPolyline = leaflet.polyline(
             wptList[tagId],
             {color: colorPalette[tagId], kindOfLayer: 'tagtrack', wptTimes: timestampList[tagId]}
         );
         tagTracks.addLayer(seshPolyline);
         const highlightPolyline = leaflet.polyline(
-            wptList[tagId].slice(0,100),
+            wptList[tagId].slice(0, 100),
             {color: 'red', kindOfLayer: 'timehighlight'}
         );
         timeHighlights.addLayer(highlightPolyline)
@@ -40,20 +40,20 @@ export async function setMapContents(wptList, timestampList, waveMap){
  * @param {number} vidNum
  * @param {number} vidTimeMS
  */
-function vidTimeToUTC(trackStartTime, vidNum, vidTimeMS){
-    const ssVidLengthMS =  623623;
+function vidTimeToUTC(trackStartTime, vidNum, vidTimeMS) {
+    const ssVidLengthMS = 623623;
     return new Date(trackStartTime.getTime() + vidNum * ssVidLengthMS + vidTimeMS * 1000);
 }
 
-function utcToSStimestamp(trackStartTime, ssTimestamp){
+function utcToSStimestamp(trackStartTime, ssTimestamp) {
     return new Date(ssTimestamp - trackStartTime)
 }
 
 function getClosestIndex(a, x) {
     // This is a binary search, returning the index of the value just below the input x using the list a
-    var low = 0, hi = a.length-1;
+    var low = 0, hi = a.length - 1;
     while (hi - low > 1) {
-        var mid = Math.round((low + hi)/2);
+        var mid = Math.round((low + hi) / 2);
         if (a[mid] <= x) {
             low = mid;
         } else {
@@ -65,8 +65,8 @@ function getClosestIndex(a, x) {
     return low
 }
 
-function setMarkerToTime(time, waveMap){
-    for (const layerId in waveMap.tagTracks._layers){
+function setMarkerToTime(time, waveMap) {
+    for (const layerId in waveMap.tagTracks._layers) {
         const trackLayer = waveMap.tagTracks._layers[layerId]
         const wptTimeIdx = getClosestIndex(trackLayer.options.wptTimes, time.getTime())
         waveMap.presentLoc.setLatLng(trackLayer._latlngs[wptTimeIdx])
@@ -83,7 +83,7 @@ function setMarkerToTime(time, waveMap){
  * Given a video title in the format 'SS3 TRACK VIDEO 2024 02 10 080301 5', return a Date object
  * @param vidTitle
  */
-function vidTitleToTrackStartTime(vidTitle){
+function vidTitleToTrackStartTime(vidTitle) {
     // Use a regular expression to extract the date and time components from the title
     // The expected format is "SS3 TRACK VIDEO YYYY MM DD HHMMSS"
     const regex = /VIDEO (\d{4}) (\d{2}) (\d{2}) (\d{2})(\d{2})(\d{2})/;
@@ -112,37 +112,38 @@ function vidTitleToTrackStartTime(vidTitle){
  * Given a video title in the format 'SS3 TRACK VIDEO 2024 02 10 080301 5', return 5, the video sequence number
  * @param vidTitle
  */
-function vidTitleToVidNumber(vidTitle){
+function vidTitleToVidNumber(vidTitle) {
     return vidTitle.match(/.* (\d*)$/)[1]
 }
-export function makeMap(){
+
+export function makeMap() {
     const waveMap = leaflet.map('wave-map');
     leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 30,
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(waveMap);
     waveMap.fitWorld();
-    const presentLoc = new leaflet.marker([0,0]);
+    const presentLoc = new leaflet.marker([0, 0]);
     waveMap.addLayer(presentLoc)
     waveMap.presentLoc = presentLoc;
     waveMap.tagTracks = [];
 
     // adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG , so we can update the map
     const playerWindow = player.getIframe().contentWindow;
-    window.addEventListener("message", function(evt){
-        if (evt.source === playerWindow){
+    window.addEventListener("message", function (evt) {
+        if (evt.source === playerWindow) {
             const data = JSON.parse(evt.data)
             if (
                 data.event === "infoDelivery" &&
                 data.info &&
                 data.info.currentTime
-            ){
+            ) {
                 const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
                 const vidNumber = vidTitleToVidNumber(player.videoTitle)
                 let timeAdj = document.querySelector("#time-adj").value;
                 timeAdj = timeAdj ? Number(timeAdj) : 0;
                 const adjustedYTtime = data.info.currentTime + timeAdj
-                const latestTime = vidTimeToUTC(trackStartTime, vidNumber-1, adjustedYTtime)
+                const latestTime = vidTimeToUTC(trackStartTime, vidNumber - 1, adjustedYTtime)
                 setMarkerToTime(latestTime, waveMap)
             }
         }

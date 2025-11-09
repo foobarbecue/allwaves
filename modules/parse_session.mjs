@@ -52,7 +52,7 @@ class ByteReader {
         return this.read(1)[0];
     }
 
-    readTimestamp(){
+    readTimestamp() {
         return hexToSignedInt(bufferToHex(this.read(8)))
     }
 
@@ -69,57 +69,57 @@ class ByteReader {
     }
 }
 
-export async function parseSession(sessionReader){
-        const session = {locations:[], absTimestamps:[]};
-        const r = new ByteReader(sessionReader);
-        const enc = new TextDecoder();
-            assert(enc.decode(r.read(4)) === 'SOLO', 'Invalid session file. Expected file content to start with "SOLO"');
-            r.read(12);
-            const TYPE_ID_LENGTH = 1;
-            const DATA_LENGTH = 1;
-            const HEADER_LENGTH = 2;
-            const TYPE_PREFIX = 170;
-            let previousTagId = null;
-            while (!r.isEnd()) {
-                assert(r.read(1)[0] === TYPE_PREFIX, 'Unexpected file content. Expected type prefix, but got something else');
-                const typeId = bufferToHex(r.read(TYPE_ID_LENGTH));
-                const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
-                const header = bufferToHex(r.read(HEADER_LENGTH));
-                const timestamp = r.readTimestamp();
-                // Check for absolute timestamps. These are present on a4, a5, and a6
-                if (timestamp > 1e12){
-                    session.absTimestamps.push(timestamp)
+export async function parseSession(sessionReader) {
+    const session = {locations: [], absTimestamps: []};
+    const r = new ByteReader(sessionReader);
+    const enc = new TextDecoder();
+    assert(enc.decode(r.read(4)) === 'SOLO', 'Invalid session file. Expected file content to start with "SOLO"');
+    r.read(12);
+    const TYPE_ID_LENGTH = 1;
+    const DATA_LENGTH = 1;
+    const HEADER_LENGTH = 2;
+    const TYPE_PREFIX = 170;
+    let previousTagId = null;
+    while (!r.isEnd()) {
+        assert(r.read(1)[0] === TYPE_PREFIX, 'Unexpected file content. Expected type prefix, but got something else');
+        const typeId = bufferToHex(r.read(TYPE_ID_LENGTH));
+        const dataLength = parseInt(bufferToHex(r.read(DATA_LENGTH)), 16);
+        const header = bufferToHex(r.read(HEADER_LENGTH));
+        const timestamp = r.readTimestamp();
+        // Check for absolute timestamps. These are present on a4, a5, and a6
+        if (timestamp > 1e12) {
+            session.absTimestamps.push(timestamp)
+        }
+        switch (typeId) {
+            case '1d':
+            case 'a0':
+            case 'a6':
+            case 'a5':
+            case 'a3':
+            case 'a4':
+                r.read(dataLength);
+                break;
+            case '08':
+                // ignore it if it has an absolute timestamp
+                if (timestamp < 1e12) {
+                    const tagId = r.readByte();
+                    const basePosition = r.readGpsLocation();
+                    const tagPosition = r.readGpsLocation();
+                    session.locations.push({tagId, basePosition, tagPosition, timestamp})
+                    r.read(10);
+                    previousTagId = tagId;
                 }
-                switch (typeId) {
-                    case '1d':
-                    case 'a0':
-                    case 'a6':
-                    case 'a5':
-                    case 'a3':
-                    case 'a4':
-                        r.read(dataLength);
-                        break;
-                    case '08':
-                        // ignore it if it has an absolute timestamp
-                        if (timestamp < 1e12){
-                            const tagId = r.readByte();
-                            const basePosition = r.readGpsLocation();
-                            const tagPosition = r.readGpsLocation();
-                            session.locations.push({tagId, basePosition, tagPosition, timestamp})
-                            r.read(10);
-                            previousTagId = tagId;
-                        }
-                        break;
-                    default:
-                        throw `Unexpected file content. Unknown type ID: ${typeId}`;
-                }
-            }
-        return session
+                break;
+            default:
+                throw `Unexpected file content. Unknown type ID: ${typeId}`;
+        }
+    }
+    return session
 }
 
-export async function loadAndParseSession(url){
+export async function loadAndParseSession(url) {
     const fileResp = await fetch(url)
-    if (fileResp.ok){
+    if (fileResp.ok) {
         const blob = await fileResp.blob();
         const arrayBuffer = await blob.arrayBuffer();
         return await parseSession(arrayBuffer);

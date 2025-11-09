@@ -1,11 +1,11 @@
-import { parseSession } from '../modules/parse_session.mjs';
+import {parseSession} from '../modules/parse_session.mjs';
 import * as fs from 'node:fs';
 import tc from 'transform-coordinates';
-import { plot } from 'nodeplotlib';
+import {plot} from 'nodeplotlib';
 
-const plotTag = (tagId, sesh)=> {
+const plotTag = (tagId, sesh) => {
     const tagSesh = sesh.locations.filter(
-        (datum)=>datum.tagId == tagId
+        (datum) => datum.tagId == tagId
     )
     const moveDists = [];
     const moveDurations = [];
@@ -56,4 +56,6 @@ const tagIdsSet = new Set(tagIds)
 // Convert to meters in UTM 11N
 const transform = tc('EPSG:4326', 'EPSG:32611');
 
-tagIdsSet.forEach((tagId)=>{plotTag(tagId, sesh);})
+tagIdsSet.forEach((tagId) => {
+    plotTag(tagId, sesh);
+})

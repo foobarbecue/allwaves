@@ -4,7 +4,7 @@ import {drawGeodataForDay, seshGeodataCache, seshTimestampCache} from "./core.mj
 let sessionDate;
 let sessionTime;
 
-let routeByUrl = ()=>{
+let routeByUrl = () => {
     const params = new URLSearchParams(document.location.search);
     sessionDate = params.get('date').replaceAll('-', ' ');
     sessionTime = params.get('time');

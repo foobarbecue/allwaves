@@ -21,7 +21,7 @@ export function setupUiEvtHdlrs() {
     document.getElementById("wave-video-togglebutton").onclick = toggleVideoCollapse;
     document.getElementById("wave-list-togglebutton").onclick = toggleListCollapse;
     document.getElementById("wave-plot-togglebutton").onclick = togglePlotCollapse;
-    window.onYouTubeIframeAPIReady = ()=>{
+    window.onYouTubeIframeAPIReady = () => {
         console.debug('setting up youtube iframe player')
         window.player = new YT.Player("wave-video", {
             playerVars: {

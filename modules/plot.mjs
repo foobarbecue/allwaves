@@ -3,7 +3,7 @@ import {loadAndParseSession} from "./parse_session.mjs";
 import proj4 from 'https://cdn.jsdelivr.net/npm/proj4@2.9.2/+esm'
 
 
-const getTagCoordsForPlot = (tagId, sesh)=>{
+const getTagCoordsForPlot = (tagId, sesh) => {
     const tagSesh = sesh.locations.filter(
         (datum) => datum.tagId == tagId
     )
@@ -43,9 +43,9 @@ const getTagCoordsForPlot = (tagId, sesh)=>{
 }
 
 
-export async function plotSession(seshDate){
+export async function plotSession(seshDate) {
     const sesh = await loadAndParseSession(
-        `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ","_")}.SESSION`
+        `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ", "_")}.SESSION`
     );
     // find all tag ids
     const tagIds = sesh.locations.map(locn => locn.tagId)
