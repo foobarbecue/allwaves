@@ -1,5 +1,6 @@
 import "https://cdn.plot.ly/plotly-3.1.2.min.js"
 import {loadAndParseSession} from "./parse_session.mjs";
+import {getClosestIndex} from "./math.mjs";
 import proj4 from 'https://cdn.jsdelivr.net/npm/proj4@2.9.2/+esm'
 
 
@@ -56,14 +57,16 @@ export async function plotSession(seshDate) {
     await Plotly.newPlot('wave-plot', locnPlot)
 }
 
-export function setTimebarPosition(index){
-    if (index === null || index === undefined || Number.isNaN(Number(index))) {
+export function setTimebarToTime(timelist, time){
+    const plot = document.getElementById('wave-plot');
+    const wptTimeIdx = getClosestIndex(timelist, time.getTime())
+    if (wptTimeIdx === null || wptTimeIdx === undefined || Number.isNaN(Number(wptTimeIdx))) {
         // Clear any vertical line
-        Plotly.relayout(document.getElementById('wave-plot'), { shapes: [] })
+        Plotly.relayout(plot, { shapes: [] })
         return
     }
 
-    const x = Number(index)
+    const x = Number(wptTimeIdx)
     const timebar = {
         type: 'line',
         x0: x,
@@ -73,5 +76,5 @@ export function setTimebarPosition(index){
         y1: 1,
         line: { color: 'red', width: 2}
     }
-    Plotly.relayout(graphDiv, { shapes: [timebar] })
+    Plotly.relayout(plot, { shapes: [timebar] })
 }

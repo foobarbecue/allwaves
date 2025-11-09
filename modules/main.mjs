@@ -1,7 +1,8 @@
 import {setupUiEvtHdlrs} from "./ui.mjs";
 import {loadAndParseSession} from "./parse_session.mjs";
 import {makeMap, setMapContents, setMarkerToTime} from "./wave_map.mjs";
-import {plotSession} from "./plot.mjs";
+import {plotSession, setTimebarToTime} from "./plot.mjs";
+import {vidTimeToUTC, vidTitleToTrackStartTime, vidTitleToVidNumber} from "./math.mjs";
 
 export const seshGeodataCache = {};
 export const seshTimestampCache = {};
@@ -117,7 +118,7 @@ const formatDescription = async (playlist_vid) => {
 };
 
 const setupTimechangeEvtHdlr = ()=>{
-// adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG , so we can update the map
+    // adding a currenttime event to yt player based on https://codepen.io/zavan/pen/PoGQWmG , so we can update the map
     const playerWindow = window.player.getIframe().contentWindow;
     window.addEventListener("message", function (evt) {
         if (evt.source === playerWindow) {
@@ -134,6 +135,8 @@ const setupTimechangeEvtHdlr = ()=>{
                 const adjustedYTtime = data.info.currentTime + timeAdj
                 const latestTime = vidTimeToUTC(trackStartTime, vidNumber - 1, adjustedYTtime)
                 setMarkerToTime(latestTime, waveMap)
+                // inconsistent signatures between ^ and v . Entire app needs a (OO?) rewrite X-D
+                setTimebarToTime(seshTimestampCache, latestTime)
             }
         }
     })
