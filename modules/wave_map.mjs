@@ -139,7 +139,10 @@ export function makeMap(){
             ){
                 const trackStartTime = vidTitleToTrackStartTime(player.videoTitle)
                 const vidNumber = vidTitleToVidNumber(player.videoTitle)
-                const latestTime = vidTimeToUTC(trackStartTime, vidNumber-1, data.info.currentTime)
+                let timeAdj = document.querySelector("#time-adj").value;
+                timeAdj = timeAdj ? Number(timeAdj) : 0;
+                const adjustedYTtime = data.info.currentTime + timeAdj
+                const latestTime = vidTimeToUTC(trackStartTime, vidNumber-1, adjustedYTtime)
                 setMarkerToTime(latestTime, waveMap)
             }
         }

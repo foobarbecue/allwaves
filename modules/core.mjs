@@ -30,10 +30,8 @@ export async function drawGeodataForDay(seshDate, seshGeodataCache, seshTimestam
                 timeStampsByTag[datum.tagId] = [];
             }
             seshDataByTag[datum.tagId].push([datum.tagPosition.latitude, datum.tagPosition.longitude]);
-            let timeAdj = document.querySelector("#time-adj").value;
-            timeAdj = timeAdj ? timeAdj : 0;
             timeStampsByTag[datum.tagId].push(
-                seshData.absTimestamps.slice(-1)[0] + datum.timestamp - seshData.locations[0].timestamp + timeAdj * 1000
+                seshData.absTimestamps.slice(-1)[0] + datum.timestamp - seshData.locations[0].timestamp
             )
         })
         seshGeodataCache[seshDate] = seshDataByTag;
