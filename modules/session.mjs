@@ -1,5 +1,5 @@
 import {setupUiEvtHdlrs} from "./ui.mjs";
-import {drawGeodataForDay, seshGeodataCache, seshTimestampCache} from "./core.mjs";
+import {drawGeodataForDay, seshGeodataCache, seshTimestampCache} from "./main.mjs";
 
 let sessionDate;
 let sessionTime;
