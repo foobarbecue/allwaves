@@ -6,6 +6,7 @@ import {vidTimeToUTC, vidTitleToTrackStartTime, vidTitleToVidNumber} from "./mat
 
 export const seshGeodataCache = {};
 export const seshTimestampCache = {};
+export let seshDate;
 
 export async function drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache) {
     // seshDate should be a string like "2023 08 20"
@@ -54,8 +55,8 @@ const get_playlists = async () => {
 };
 
 const getVids = async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const seshDate = urlParams.get('seshDate')
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const seshDate = urlParams.get('seshDate')
     const playlists = await get_playlists();
     for (const playlist of playlists.items) {
         const resp = await fetch(
@@ -74,7 +75,7 @@ const getVids = async () => {
                 vid_li_a.textContent = vid.snippet.title;
                 vid_li_a.href = "javascript:;";
                 vid_li_a.onclick = () => {
-                    const seshDate = /\d{4} \d\d \d\d/.exec(vid.snippet.title)[0]
+                    seshDate = /\d{4} \d\d \d\d/.exec(vid.snippet.title)[0]
                     document.querySelector("#wave-video-title").textContent = `Playing video: ${vid.snippet.title}`;
                     window.player.loadVideoById(vid.snippet.resourceId.videoId);
                     drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
@@ -105,7 +106,7 @@ const formatDescription = async (playlist_vid) => {
             const mins = Number(wave_time_re[1]);
             const secs = Number(wave_time_re[2]);
             const tot_secs = mins * 60 + secs;
-            const seshDate = /\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title)[0]
+            seshDate = /\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title)[0]
             document.querySelector("#wave-video-title").textContent = `Playing video: ${playlist_vid.snippet.title}`;
             window.player.loadVideoById(playlist_vid.snippet.resourceId.videoId, tot_secs);
             drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
@@ -136,7 +137,10 @@ const setupTimechangeEvtHdlr = ()=>{
                 const latestTime = vidTimeToUTC(trackStartTime, vidNumber - 1, adjustedYTtime)
                 setMarkerToTime(latestTime, waveMap)
                 // inconsistent signatures between ^ and v . Entire app needs a (OO?) rewrite X-D
-                setTimebarToTime(seshTimestampCache, latestTime)
+                const timestampListPerTag = seshTimestampCache[seshDate];
+                for (const tagId in timestampListPerTag) {
+                    setTimebarToTime(seshTimestampCache[seshDate][tagId], latestTime)
+                }
             }
         }
     })
