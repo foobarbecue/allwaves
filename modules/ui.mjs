@@ -1,5 +1,6 @@
-import {makeMap} from "./wave_map.mjs";
-
+import {setTimebarToTime} from "./plot.mjs";
+import {vidTimeToUTC, vidTitleToTrackStartTime, vidTitleToVidNumber} from "./math.mjs";
+import {setMarkerToTime} from "./wave_map.mjs"
 const toggleMapCollapse = () => {
     document.getElementById("wave-map").classList.toggle("collapsed");
 }

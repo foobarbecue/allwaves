@@ -1,8 +1,7 @@
 import {setupTimechangeEvtHdlr, setupUiEvtHdlrs} from "./ui.mjs";
 import {loadAndParseSession} from "./parse_session.mjs";
-import {makeMap, setMapContents, setMarkerToTime} from "./wave_map.mjs";
-import {plotSession, setTimebarToTime} from "./plot.mjs";
-import {vidTimeToUTC, vidTitleToTrackStartTime, vidTitleToVidNumber} from "./math.mjs";
+import {makeMap, setMapContents} from "./wave_map.mjs";
+import {plotSession} from "./plot.mjs";
 
 export const seshGeodataCache = {};
 export const seshTimestampCache = {};
