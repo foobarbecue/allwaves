@@ -36,11 +36,13 @@ const getTagCoordsForPlot = (tagId) => {
 
     document.querySelector("#wave-plot-title").textContent = `Mapping: ${seshDate}`;
 
-    const distsPlot = [{
+    const distsPlot = {
         y: moveDists,
+        // y: [...Array(moveTimes.length).keys()],
         x: moveTimes.map(timestamp => new Date(timestamp)),
-        name: `Tag ${tagId}: speed`
-    }]
+        name: `Tag ${tagId}: speed`,
+        // mode: 'lines+markers'
+    }
 
     // const locnPlot = {
     //     y: tagLocnsUTM.map(locn => locn.y),
@@ -52,10 +54,13 @@ const getTagCoordsForPlot = (tagId) => {
 
 
 export async function plotSession() {
+    const plotData = []
     const firstTagId = Object.keys(seshGeodataCache[seshDate])[0]
-    const locnPlot = getTagCoordsForPlot(firstTagId)
-    const layout = {title: {text: 'Speed'}, showLegend: true, xaxis:{tickformat: '%H:%M'}}
-    await Plotly.newPlot('wave-plot', locnPlot, layout)
+    for (const tagId in seshGeodataCache[seshDate]){
+        plotData.push(getTagCoordsForPlot(tagId))
+    }
+    const layout = {title: {text: 'Speed'}, showLegend: true, xaxis:{tickformat: '%H:%M:%S'}}
+    await Plotly.newPlot('wave-plot', plotData, layout)
 }
 
 export function setTimebarToTime(timelist, time){
