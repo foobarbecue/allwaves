@@ -5,34 +5,32 @@ import proj4 from 'https://cdn.jsdelivr.net/npm/proj4@2.9.2/+esm'
 import {seshDate, seshTimestampCache, seshGeodataCache} from "./data.js";
 
 
-// TODO use cache
-const getTagCoordsForPlot = (tagId, sesh) => {
-    const tagSesh = sesh.locations.filter(
-        (datum) => datum.tagId == tagId
-    )
+const getTagCoordsForPlot = (tagId) => {
     const moveDists = [];
     const moveDurations = [];
     const moveSpeeds = [];
     const moveTimes = [];
-    const tagLocnsUTM = tagSesh.map(
+    const geoData = seshGeodataCache[seshDate][tagId]
+    const timeData = seshTimestampCache[seshDate][tagId]
+    const tagLocnsUTM = geoData.map(
         // Convert to meters in UTM 11N
         locn => proj4(
             'EPSG:4326',
             '+proj=utm +zone=11 +datum=WGS84 +units=m +no_defs +type=crs',
-            [locn.tagPosition.longitude, locn.tagPosition.latitude, locn.tagPosition.elevation])
+            [locn[1], locn[0]])
     )
     for (let ind = 0; ind < tagLocnsUTM.length - 1; ind++) {
         moveDists.push(
             Math.sqrt((tagLocnsUTM[ind + 1][0] - tagLocnsUTM[ind][0]) ** 2 + (tagLocnsUTM[ind + 1][1] - tagLocnsUTM[ind][1]) ** 2)
         );
         moveDurations.push(
-            tagSesh[ind + 1].timestamp - tagSesh[ind].timestamp
+            timeData[ind + 1] - timeData[ind]
         );
         moveSpeeds.push(
             moveDists[ind] / (moveDurations[ind] * 1000)
         );
         moveTimes.push(
-            tagSesh[ind].timestamp
+            timeData[ind]
         )
     }
 
@@ -53,15 +51,9 @@ const getTagCoordsForPlot = (tagId, sesh) => {
 }
 
 
-export async function plotSession(seshDate) {
-    const sesh = await loadAndParseSession(
-        `seshfiles/SS3_EDIT_${seshDate.replaceAll(" ", "_")}.SESSION`
-    );
-    // find all tag ids
-    const tagIds = sesh.locations.map(locn => locn.tagId)
-    const tagIdsSet = new Set(tagIds)
-
-    const locnPlot = getTagCoordsForPlot(tagIdsSet.entries().toArray()[0][0], sesh)
+export async function plotSession() {
+    const firstTagId = Object.keys(seshGeodataCache[seshDate])[0]
+    const locnPlot = getTagCoordsForPlot(firstTagId)
     const layout = {title: {text: 'Speed'}, showLegend: true, xaxis:{tickformat: '%H:%M'}}
     await Plotly.newPlot('wave-plot', locnPlot, layout)
 }
