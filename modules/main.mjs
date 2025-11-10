@@ -70,12 +70,12 @@ const getVids = async () => {
                 const vid_li_a = document.createElement("a");
                 vid_li_a.textContent = vid.snippet.title;
                 vid_li_a.href = "javascript:;";
-                vid_li_a.onclick = () => {
+                vid_li_a.onclick = async () => {
                     setSeshDate(/\d{4} \d\d \d\d/.exec(vid.snippet.title)[0])
                     document.querySelector("#wave-video-title").textContent = `Playing video: ${vid.snippet.title}`;
                     window.player.loadVideoById(vid.snippet.resourceId.videoId);
-                    drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
-                    plotSession(seshDate);
+                    await drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
+                    await plotSession(seshDate);
                 }
                 vid_li.appendChild(vid_li_a)
                 pl_li.querySelector("ul").appendChild(vid_li);
@@ -97,7 +97,7 @@ const formatDescription = async (playlist_vid) => {
         wave_li.appendChild(wave_li_a);
         wave_li_a.textContent = wave.replace("- ", "");
         wave_li_a.href = "javascript:;";
-        wave_li_a.onclick = () => {
+        wave_li_a.onclick = async () => {
             const wave_time_re = /(\d\d):(\d\d)/.exec(wave);
             const mins = Number(wave_time_re[1]);
             const secs = Number(wave_time_re[2]);
@@ -105,8 +105,8 @@ const formatDescription = async (playlist_vid) => {
             seshDate = /\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title)[0]
             document.querySelector("#wave-video-title").textContent = `Playing video: ${playlist_vid.snippet.title}`;
             window.player.loadVideoById(playlist_vid.snippet.resourceId.videoId, tot_secs);
-            drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
-            plotSession(seshDate);
+            await drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
+            await plotSession(seshDate);
         };
         description.appendChild(wave_li);
 
