@@ -102,7 +102,7 @@ const formatDescription = async (playlist_vid) => {
             const mins = Number(wave_time_re[1]);
             const secs = Number(wave_time_re[2]);
             const tot_secs = mins * 60 + secs;
-            seshDate = /\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title)[0]
+            setSeshDate(/\d{4} \d\d \d\d/.exec(playlist_vid.snippet.title)[0])
             document.querySelector("#wave-video-title").textContent = `Playing video: ${playlist_vid.snippet.title}`;
             window.player.loadVideoById(playlist_vid.snippet.resourceId.videoId, tot_secs);
             await drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
