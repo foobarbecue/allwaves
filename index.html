@@ -9,58 +9,14 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
-    <link rel="stylesheet" href="main.css"/>
-    <script type="module" src="modules/main.mjs" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/golden-layout/2.6.0/css/goldenlayout-base.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/golden-layout/2.6.0/css/themes/goldenlayout-light-theme.min.css">
+    <script type="module" src="modules/layout.mjs" defer></script>
     <div><h1>Always allwav.es</h1></div>
     <div style="position:absolute; top:0; right:0; margin: 1em">
         <a href="https://github.com/foobarbecue/allwaves/">source code</a>
     </div>
-    <div style="height:100%; position: relative">
-        <div style="display: flex;position: absolute;width: 100%;height: 100%;justify-content: space-between">
-            <div id="wave-list">
-                <ul>
-                </ul>
-            </div>
-            <div id="wave-list-titlebar-container">
-                <div id="wave-list-togglebutton">toggle list</div>
-            </div>
-            <div id="wave-display">
-                <div id="wave-video-titlebar">
-                    <div id="wave-video-title">
-                        Playing video: no data
-                    </div>
-                    <div id="wave-video-togglebutton" class="togglebutton-right">
-                        toggle video
-                    </div>
-                </div>
-                <div id="wave-video">
-                </div>
-                <div id="wave-map-titlebar">
-                    <div id="wave-map-title">
-                        Mapping: no data
-                    </div>
-                    <div>
-                        <span>Time adjustment: <input id="time-adj" type="range" min="-100" max="100"/></span>
-                        Video will be delayed <span id="time-adj-disp">0</span> seconds relative to map and plots.
-                    </div>
-                    <div id="wave-map-togglebutton" class="togglebutton-right">
-                        toggle map
-                    </div>
-                </div>
-                <div id="wave-map">
-                </div>
-                <div id="wave-plot-titlebar">
-                    <div id="wave-plot-title">
-                        Plotting: no data
-                    </div>
-                    <div id="wave-plot-togglebutton" class="togglebutton-right">
-                        toggle plot
-                    </div>
-                </div>
-                <div id="wave-plot">
-                </div>
-            </div>
-        </div>
+    <div id="app-container" style="height:100%; position: relative">
     </div>
 </div>
 </body>
