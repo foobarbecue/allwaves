@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Golden Layout CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/golden-layout/2.6.0/css/goldenlayout-base.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/golden-layout/2.6.0/css/themes/goldenlayout-dark-theme.min.css">
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        #layout-container {
+            width: 100%;
+            height: 100%;
+        }
+        .component-content {
+            padding: 20px;
+            height: 100%;
+            box-sizing: border-box;
+            color: white;
+        }
+        .component-content h2 {
+            margin-top: 0;
+        }
+        .component-content button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div id="layout-container"></div>
+<script type="module">
+    import { GoldenLayout } from 'https://cdn.jsdelivr.net/npm/golden-layout@2.6.0/+esm';
+
+    // Define the layout configuration
+    const layoutConfig = {
+        root: {
+            type: 'row',
+            content: [
+                {
+                    type: 'component',
+                    title: 'Panel A',
+                    componentType: 'myComponent',
+                    componentState: { label: 'A', color: '#3498db' },
+                    width: 50
+                },
+                {
+                    type: 'column',
+                    content: [
+                        {
+                            type: 'component',
+                            title: 'Panel B',
+                            componentType: 'myComponent',
+                            componentState: { label: 'B', color: '#2ecc71' }
+                        },
+                        {
+                            type: 'component',
+                            title: 'Panel C',
+                            componentType: 'myComponent',
+                            componentState: { label: 'C', color: '#e74c3c' }
+                        },
+                        {
+                            type: 'component',
+                            title: 'Panel C',
+                            componentType: 'myComponent',
+                            componentState: { label: 'C', color: '#e74c3c' }
+                        }
+                    ]
+                }
+            ]
+        }
+    };
+
+    // Get the container element
+    const container = document.getElementById('layout-container');
+
+    // Create the GoldenLayout instance
+    const layout = new GoldenLayout(container);
+
+    // Register the component factory function
+    layout.registerComponentFactoryFunction('myComponent', (container, state) => {
+        const div = document.createElement('div');
+        div.className = 'component-content';
+        div.style.backgroundColor = state.color || '#333';
+        div.innerHTML = `
+                <h2>Component ${state.label}</h2>
+                <p>This is a draggable, resizable panel.</p>
+                <p>Try dragging the tab to rearrange the layout!</p>
+                <p>You can also resize panels by dragging the borders.</p>
+            `;
+        container.element.appendChild(div);
+    });
+
+    // Load the layout
+    layout.loadLayout(layoutConfig);
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        layout.setSize(container.offsetWidth, container.offsetHeight);
+    });
+</script>
+</body>
+</html>
