@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>allwav.es</title>
+</head>
+<body style="margin: 0;">
+<div id="main-container" style="position: absolute; height: 100%; width: 100%; display: flex; flex-direction: column">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dockview-core@4.11.0/dist/styles/dockview.css">
+    <link rel="stylesheet" href="main.css"/>
+    <script type="importmap">
+        {
+            "imports": {
+                "dockview-core": "./node_modules/dockview-core/dist/dockview-core.esm.js"
+            }
+        }
+    </script>
+    <script type="module" src="modules/main_dockview.mjs" defer></script>
+    <div><h1>Always allwav.es</h1></div>
+    <div style="position:absolute; top:0; right:0; margin: 1em">
+        <a href="https://github.com/foobarbecue/allwaves/">source code</a>
+    </div>
+    <div style="height:100%; position: relative" id="dockview-container">
+    </div>
+</div>
+</body>
+<script src="https://www.youtube.com/iframe_api" defer></script>
+<script src="https://apis.google.com/js/api.js" defer></script>
+</html>

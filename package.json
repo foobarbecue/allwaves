@@ -2,5 +2,8 @@
   "name": "allwaves-site",
   "version": "0.1.0",
   "homepage": "http://allwav.es",
-  "author": "Aaron Curtis"
+  "author": "Aaron Curtis",
+  "dependencies": {
+    "dockview-core": "^4.13.1"
+  }
 }
