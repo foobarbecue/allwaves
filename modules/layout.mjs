@@ -9,7 +9,7 @@ const layoutConfig = {
                 type: 'component',
                 title: 'Wave list',
                 componentType: 'waveList',
-                width: 10
+                width: 20
             },
             {
                 type: 'column',
