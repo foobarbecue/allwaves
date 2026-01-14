@@ -1,5 +1,6 @@
 import { GoldenLayout } from 'https://cdn.jsdelivr.net/npm/golden-layout@2.6.0/+esm';
 import "./main.mjs";
+import { timechangeEvtHdlr } from "./ui.mjs";
 
 const layoutConfig = {
     root: {
@@ -78,6 +79,10 @@ layout.registerComponentFactoryFunction('waveMap',(container, state) => {
     waveMapDiv.setAttribute('style','width: 100%; height: 100%')
     container.element.appendChild(waveMapTitlebarDiv);
     container.element.appendChild(waveMapDiv);
+    container.element.querySelector('#time-adj').oninput = (ev) => {
+        container.element.querySelector('#time-adj-disp').innerText = ev.target.value;
+        timechangeEvtHdlr(window.player.getCurrentTime());
+    };
 })
 
 layout.registerComponentFactoryFunction('wavePlot',(container, state) => {

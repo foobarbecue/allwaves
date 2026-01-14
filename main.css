@@ -4,6 +4,11 @@ body {
     color-scheme: light dark;
 }
 
+#wave-map-titlebar {
+    z-index: 1000;
+    position: absolute;
+}
+
 @media (prefers-color-scheme: dark) {
     #wave-plot {
         filter: invert(100%) hue-rotate(180deg);

@@ -30,7 +30,7 @@ const togglePlotCollapse = () => {
  *   - Gets the time adjustment from the time adjustment range input element
  * @param ytVidTime Time that the video is showing
  */
-const timechangeEvtHdlr = (ytVidTime) => {
+export const timechangeEvtHdlr = (ytVidTime) => {
   const trackStartTime = vidTitleToTrackStartTime(player.videoTitle);
   const vidNumber = vidTitleToVidNumber(player.videoTitle);
   let timeAdj = document.querySelector("#time-adj").value;
@@ -63,8 +63,8 @@ export const setupTimechangeEvtHdlr = () => {
 };
 
 export function setupUiEvtHdlrs() {
-  // document.getElementById("time-adj").oninput = (ev) => {
-  //   document.getElementById("time-adj-disp").innerText = ev.target.value;
-  //   timechangeEvtHdlr(window.player.getCurrentTime());
-  // };
+  document.getElementById("time-adj").oninput = (ev) => {
+    document.getElementById("time-adj-disp").innerText = ev.target.value;
+    timechangeEvtHdlr(window.player.getCurrentTime());
+  };
 }

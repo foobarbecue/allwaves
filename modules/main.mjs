@@ -154,4 +154,3 @@ window.onYouTubeIframeAPIReady = () => {
 };
 
 getVids();
-setupUiEvtHdlrs();
