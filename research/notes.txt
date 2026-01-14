@@ -48,3 +48,7 @@ tracking start 14:50:03 (calibration start :03, finished :16)
 initial timestamps are 14:49:27 (Why???) instead of 14:50:16
 time matched up with:
  last initial timestamp + rel timestamp - first rel timestamp + 45000(fudge factor, probably difference between opening video screen and starting tracking)
+
+Learned on 2025-11-15
+----------------------
+GPS track is only recorded for one tag at a time
