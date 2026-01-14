@@ -63,15 +63,8 @@ export const setupTimechangeEvtHdlr = () => {
 };
 
 export function setupUiEvtHdlrs() {
-  document.getElementById("wave-map-togglebutton").onclick = toggleMapCollapse;
-  document.getElementById("wave-video-togglebutton").onclick =
-    toggleVideoCollapse;
-  document.getElementById("wave-list-togglebutton").onclick =
-    toggleListCollapse;
-  document.getElementById("wave-plot-togglebutton").onclick =
-    togglePlotCollapse;
-  document.getElementById("time-adj").oninput = (ev) => {
-    document.getElementById("time-adj-disp").innerText = ev.target.value;
-    timechangeEvtHdlr(window.player.getCurrentTime());
-  };
+  // document.getElementById("time-adj").oninput = (ev) => {
+  //   document.getElementById("time-adj-disp").innerText = ev.target.value;
+  //   timechangeEvtHdlr(window.player.getCurrentTime());
+  // };
 }
