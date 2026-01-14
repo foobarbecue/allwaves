@@ -39,12 +39,12 @@ const container = document.getElementById('app-container');
 const layout = new GoldenLayout(container);
 
 layout.registerComponentFactoryFunction('waveList',(container, state) => {
-    const div = document.createElement('div');
-    div.id='wave-list';
+    const waveListDiv = document.createElement('div');
+    waveListDiv.id='wave-list';
     const ul = document.createElement('ul');
-    div.appendChild(ul);
-    container.element.appendChild(div);
-
+    waveListDiv.appendChild(ul);
+    container.element.appendChild(waveListDiv);
+    container.element.setAttribute('style','overflow: scroll')
 })
 
 layout.registerComponentFactoryFunction('waveVideo',(container, state) => {
