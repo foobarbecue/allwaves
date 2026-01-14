@@ -75,6 +75,7 @@ layout.registerComponentFactoryFunction('waveMap',(container, state) => {
     `
     const waveMapDiv = document.createElement('div');
     waveMapDiv.id='wave-map';
+    waveMapDiv.setAttribute('style','width: 100%; height: 100%')
     container.element.appendChild(waveMapTitlebarDiv);
     container.element.appendChild(waveMapDiv);
 })
