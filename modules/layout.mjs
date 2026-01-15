@@ -70,7 +70,7 @@ layout.registerComponentFactoryFunction('waveMap',(container, state) => {
                         Mapping: no data
                     </div>
                     <div>
-                        <span>Time adjustment: <input id="time-adj" type="range" min="-100" max="100"/></span>
+                    <span>Time adjustment: <input id="time-adj" type="range" min="-100" max="100"/></span>
                         Video will be delayed <span id="time-adj-disp">0</span> seconds relative to map and plots.
                     </div>
     `

@@ -7,22 +7,6 @@ import {
 import { setMarkerToTime } from "./wave_map.mjs";
 import { seshTimestampCache, seshDate } from "./data.js";
 
-const toggleMapCollapse = () => {
-  document.getElementById("wave-map").classList.toggle("collapsed");
-};
-
-const toggleVideoCollapse = () => {
-  document.getElementById("wave-video").classList.toggle("collapsed");
-};
-
-const toggleListCollapse = () => {
-  document.getElementById("wave-list").classList.toggle("collapsed");
-};
-
-const togglePlotCollapse = () => {
-  document.getElementById("wave-plot").classList.toggle("collapsed");
-};
-
 /**
  * Updates display widgets (map, plots) with the latest time that the video is seeked to.
  * In addition to ytVidTime, this function also gets data from the DOM:

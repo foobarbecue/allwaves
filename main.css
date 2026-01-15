@@ -2,9 +2,10 @@ body {
     background-color: Canvas;
     color: CanvasText;
     color-scheme: light dark;
+    margin: 0;
 }
 
-#wave-map-titlebar {
+#wave-map-titlebar, #wave-plot-titlebar {
     z-index: 1000;
     position: absolute;
 }

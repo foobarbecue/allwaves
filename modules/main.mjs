@@ -7,6 +7,7 @@ import {
   seshTimestampCache,
   seshDate,
   setSeshDate,
+  timeOffsets
 } from "./data.js";
 
 export async function drawGeodataForDay(
@@ -101,6 +102,8 @@ const getVids = async () => {
             seshTimestampCache,
           );
           await plotSession(seshDate);
+          document.querySelector('#time-adj').value = timeOffsets[seshDate];
+          document.querySelector('#time-adj-disp').innerText = timeOffsets[seshDate];
         };
         vid_li.appendChild(vid_li_a);
         pl_li.querySelector("ul").appendChild(vid_li);
@@ -136,6 +139,8 @@ const formatDescription = async (playlist_vid) => {
       );
       await drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
       await plotSession(seshDate);
+      document.querySelector('#time-adj').value = timeOffsets[seshDate];
+      document.querySelector('#time-adj-disp').innerText = timeOffsets[seshDate];
     };
     description.appendChild(wave_li);
   });
