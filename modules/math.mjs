@@ -25,7 +25,7 @@ export function getClosestIndex(a, x) {
 /**
  * Given a time trackStartTime as a js Date object, a video number vidNum and vidTimeMS in milliseconds, return UTC time
  * @param {Date} trackStartTime
- * @param {number} vidNum
+ * @param {number} vidNum The soloshot splits up output into roughly 10 minute videos. This is the sequential numerical index of those video sections.
  * @param {number} vidTimeMS
  */
 export function vidTimeToUTC(trackStartTime, vidNum, vidTimeMS) {

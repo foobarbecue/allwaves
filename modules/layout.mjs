@@ -36,19 +36,29 @@ const layoutConfig = {
     }
 }
 
-const container = document.getElementById('app-container');
-const layout = new GoldenLayout(container);
+function handleBindComponent(container, itemConfig) {
+    const componentType = itemConfig.componentType;
+    const state = itemConfig.componentState || {};
+    const componentHandlerMap = {
+        "waveList": createWaveList,
+        "waveMap": createWaveMap,
+        "wavePlot": createWavePlot,
+        "waveVideo": createWaveVideo
+    }
+    componentHandlerMap[componentType](container, state)
+    return { component: undefined, virtual: false };
+}
 
-layout.registerComponentFactoryFunction('waveList',(container, state) => {
+const createWaveList = (container, state) => {
     const waveListDiv = document.createElement('div');
     waveListDiv.id='wave-list';
     const ul = document.createElement('ul');
     waveListDiv.appendChild(ul);
     container.element.appendChild(waveListDiv);
     container.element.setAttribute('style','overflow: scroll')
-})
+}
 
-layout.registerComponentFactoryFunction('waveVideo',(container, state) => {
+const createWaveVideo = (container, state) => {
     const waveVideoTitlebarDiv = document.createElement('div');
     waveVideoTitlebarDiv.id="wave-video-titlebar"
     waveVideoTitlebarDiv.innerHTML = `
@@ -60,9 +70,9 @@ layout.registerComponentFactoryFunction('waveVideo',(container, state) => {
     waveVideoDiv.id='wave-video';
     container.element.appendChild(waveVideoTitlebarDiv)
     container.element.appendChild(waveVideoDiv);
-})
+}
 
-layout.registerComponentFactoryFunction('waveMap',(container, state) => {
+const createWaveMap = (container, state) => {
     const waveMapTitlebarDiv = document.createElement('div');
     waveMapTitlebarDiv.id="wave-map-titlebar"
     waveMapTitlebarDiv.innerHTML = `
@@ -83,9 +93,9 @@ layout.registerComponentFactoryFunction('waveMap',(container, state) => {
         container.element.querySelector('#time-adj-disp').innerText = ev.target.value;
         timechangeEvtHdlr(window.player.getCurrentTime());
     };
-})
+}
 
-layout.registerComponentFactoryFunction('wavePlot',(container, state) => {
+const createWavePlot = (container, state) => {
     const wavePlotTitlebarDiv = document.createElement('div')
     wavePlotTitlebarDiv.id = "wave-plot-titlebar"
     wavePlotTitlebarDiv.innerHTML = `
@@ -96,9 +106,18 @@ layout.registerComponentFactoryFunction('wavePlot',(container, state) => {
     wavePlotDiv.id='wave-plot';
     container.element.appendChild(wavePlotTitlebarDiv);
     container.element.appendChild(wavePlotDiv);
-})
+}
 
-layout.loadLayout(layoutConfig)
+const container = document.getElementById('app-container');
+const layout = new GoldenLayout(container, handleBindComponent, () => {});
+
+// Check if this is a popout window
+const isSubWindow = new URLSearchParams(window.location.search).has('gl-window');
+
+// Only load config in main window - popouts get config from localStorage automatically
+if (!isSubWindow && !layout.isSubWindow) {
+    layout.loadLayout(layoutConfig);
+}
 
 // Handle window resize
 window.addEventListener('resize', () => {
