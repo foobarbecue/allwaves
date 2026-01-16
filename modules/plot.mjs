@@ -61,8 +61,9 @@ export async function plotSession() {
     title: { text: "Speed" },
     showLegend: true,
     xaxis: { tickformat: "%H:%M:%S" },
+    autoSize: true
   };
-  await Plotly.newPlot("wave-plot", plotData, layout);
+  await Plotly.newPlot("wave-plot", plotData, layout, { responsive: true });
 }
 
 export function setTimebarToTime(timelist, time) {
