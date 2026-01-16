@@ -5,9 +5,15 @@ body {
     margin: 0;
 }
 
-#wave-map-titlebar, #wave-plot-titlebar {
-    z-index: 1000;
-    position: absolute;
+#wave-video, #wave-map {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.lm_content {
+    display: flex;
+    flex-direction: column;
 }
 
 @media (prefers-color-scheme: dark) {

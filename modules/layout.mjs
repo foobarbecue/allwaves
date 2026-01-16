@@ -86,7 +86,6 @@ const createWaveMap = (container, state) => {
     `
     const waveMapDiv = document.createElement('div');
     waveMapDiv.id='wave-map';
-    waveMapDiv.setAttribute('style','width: 100%; height: 100%')
     container.element.appendChild(waveMapTitlebarDiv);
     container.element.appendChild(waveMapDiv);
     container.element.querySelector('#time-adj').oninput = (ev) => {
@@ -119,7 +118,4 @@ if (!isSubWindow && !layout.isSubWindow) {
     layout.loadLayout(layoutConfig);
 }
 
-// Handle window resize
-window.addEventListener('resize', () => {
-    layout.setSize(container.offsetWidth, container.offsetHeight);
-});
+layout.resizeWithContainerAutomatically = true;
