@@ -1,4 +1,4 @@
-import { setupTimechangeEvtHdlr, setupUiEvtHdlrs } from "./ui.mjs";
+import { setupTimechangeEvtHdlr } from "./ui.mjs";
 import { loadAndParseSession } from "./parse_session.mjs";
 import { makeMap, setMapContents } from "./wave_map.mjs";
 import { plotSession } from "./plot.mjs";
@@ -9,6 +9,7 @@ import {
   setSeshDate,
   timeOffsets
 } from "./data.js";
+import { vidTitleToVidNumber } from "./math.mjs";
 
 export async function drawGeodataForDay(
   seshDate,
@@ -102,8 +103,10 @@ const getVids = async () => {
             seshTimestampCache,
           );
           await plotSession(seshDate);
-          document.querySelector('#time-adj').value = timeOffsets[seshDate];
-          document.querySelector('#time-adj-disp').innerText = timeOffsets[seshDate];
+          const vidNumber = vidTitleToVidNumber(vid.snippet.title)
+          const timeOffset = timeOffsets[seshDate][vidNumber] || 0
+          document.querySelector('#time-adj').value = timeOffset;
+          document.querySelector('#time-adj-disp').innerText = timeOffset;
         };
         vid_li.appendChild(vid_li_a);
         pl_li.querySelector("ul").appendChild(vid_li);
@@ -139,8 +142,9 @@ const formatDescription = async (playlist_vid) => {
       );
       await drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
       await plotSession(seshDate);
-      document.querySelector('#time-adj').value = timeOffsets[seshDate];
-      document.querySelector('#time-adj-disp').innerText = timeOffsets[seshDate];
+      const timeOffset = timeOffsets[seshDate][1] || 0
+      document.querySelector('#time-adj').value = timeOffset
+      document.querySelector('#time-adj-disp').innerText = timeOffset
     };
     description.appendChild(wave_li);
   });
