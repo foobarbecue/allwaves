@@ -11,14 +11,14 @@ export function getClosestIndex(a, x) {
     }
   }
   if (a[low] == x) hi = low;
-  console.log(
-    "closest value to " +
-      new Date(x) +
-      " is " +
-      new Date(a[low]) +
-      " at index " +
-      low,
-  );
+  // console.log(
+  //   "closest value to " +
+  //     new Date(x) +
+  //     " is " +
+  //     new Date(a[low]) +
+  //     " at index " +
+  //     low,
+  // );
   return low;
 }
 
@@ -76,36 +76,40 @@ export function vidTitleToVidNumber(vidTitle) {
   return vidTitle.match(/.* (\d*)$/)[1];
 }
 
-export function triangularMA_uneven(t, v, windowRadius) {
-  // t: array of timestamps (sorted)
-  // v: array of values
-  // windowRadius: half-width of the window in time units
+/**
+ * Loop through data and pick times when speed was above a threshold for at least window consecutive samples.
+ * Return an object of index values [[startIndex1,endIndex1],[startIndex2,endIndex2],...]
+ * @param speeds array of speeds in meters per second
+ * @param threshold minimum speed to trigger detector
+ * @param window minimum number of samples the signal must be high to trigger detector
+ */
+export function findWaves(speeds, threshold, window){
+  // generate a boolean array of whether speed exceeds the threshold
+  const fastEnoughIndices = speeds.map(speed => speed > threshold);
 
-  const result = [];
-
-  for (let i = 0; i < t.length; i++) {
-    const center = t[i];
-    let sum = 0;
-    let weightSum = 0;
-
-    // Look left
-    for (let j = i; j >= 0 && center - t[j] <= windowRadius; j--) {
-      const dist = Math.abs(t[j] - center);
-      const weight = 1 - dist / windowRadius;
-      sum += v[j] * weight;
-      weightSum += weight;
-    }
-
-    // Look right (skip center since we already counted it)
-    for (let j = i + 1; j < t.length && t[j] - center <= windowRadius; j++) {
-      const dist = Math.abs(t[j] - center);
-      const weight = 1 - dist / windowRadius;
-      sum += v[j] * weight;
-      weightSum += weight;
-    }
-
-    result.push(sum / weightSum);
-  }
-
-  return result;
+  // loop through fastEnoughIndices and create start, end pairs
+  let waves = [];
+  let consecutiveHigh = 0;
+  let latestStart, latestEnd;
+  fastEnoughIndices.map(
+      (val, ind, arr)=>{
+        if (val){
+          consecutiveHigh ++
+          // If we just rose above the threshold
+          if (! arr[ind-1]){
+            latestStart = ind;
+          }
+        } else {
+          // If we just sunk below the threshold
+          if (arr[ind-1]){
+            latestEnd = ind;
+            if (consecutiveHigh > window) {
+              waves.push([latestStart, latestEnd])
+            }
+          }
+          consecutiveHigh = 0
+        }
+      }
+  )
+  return waves
 }
