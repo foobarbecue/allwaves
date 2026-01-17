@@ -103,8 +103,8 @@ const getVids = async () => {
             seshTimestampCache,
           );
           await plotSession(seshDate);
-          const vidNumber = vidTitleToVidNumber(vid.snippet.title)
-          const timeOffset = timeOffsets[seshDate][vidNumber] || 0
+          const vidNumber = vidTitleToVidNumber(vid.snippet.title);
+          const timeOffset = timeOffsets[seshDate]?.[vidNumber] || 0;
           document.querySelector('#time-adj').value = timeOffset;
           document.querySelector('#time-adj-disp').innerText = timeOffset;
         };
@@ -142,9 +142,9 @@ const formatDescription = async (playlist_vid) => {
       );
       await drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
       await plotSession(seshDate);
-      const timeOffset = timeOffsets[seshDate][1] || 0
-      document.querySelector('#time-adj').value = timeOffset
-      document.querySelector('#time-adj-disp').innerText = timeOffset
+      const timeOffset = timeOffsets[seshDate]?.[1] || 0;
+      document.querySelector('#time-adj').value = timeOffset;
+      document.querySelector('#time-adj-disp').innerText = timeOffset;
     };
     description.appendChild(wave_li);
   });

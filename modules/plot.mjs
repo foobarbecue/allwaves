@@ -2,8 +2,9 @@ import "https://cdn.plot.ly/plotly-3.1.2.min.js";
 import { getClosestIndex } from "./math.mjs";
 import proj4 from "https://cdn.jsdelivr.net/npm/proj4@2.9.2/+esm";
 import { seshDate, seshTimestampCache, seshGeodataCache } from "./data.js";
+import { findWaves} from "./math.mjs";
 
-const getTagCoordsForPlot = (tagId) => {
+const getSpeedData = (tagId) => {
   const moveDists = [];
   const moveDurations = [];
   const moveSpeeds = [];
@@ -46,34 +47,54 @@ const getTagCoordsForPlot = (tagId) => {
   document.querySelector("#wave-plot-title").textContent =
       `Mapping: ${seshDate}`;
 
-  const speedsPlot = {
-    y: moveSpeeds,
-    // y: [...Array(moveTimes.length).keys()],
-    x: moveTimes.map((timestamp) => new Date(timestamp)),
-    name: `Tag ${tagId}: speed`,
-    // mode: 'lines+markers'
-  };
 
-  // const locnPlot = {
-  //     y: tagLocnsUTM.map(locn => locn.y),
-  //     x: tagLocnsUTM.map(locn => locn.x)
-  // }
-  return speedsPlot;
+
+  return {moveSpeedsNoShortdur, moveTimesNoShortdur}
 };
 
 export async function plotSession() {
-  const plotData = [];
   const firstTagId = Object.keys(seshGeodataCache[seshDate])[0];
-  for (const tagId in seshGeodataCache[seshDate]) {
-    plotData.push(getTagCoordsForPlot(tagId));
-  }
+  const speedsData = getSpeedData(firstTagId);
+  const waveIndices = findWaves(speedsData.moveSpeedsNoShortdur, 2.5, 10)
+  const moveTimes = speedsData.moveTimesNoShortdur.map((timestamp) => new Date(timestamp))
+  const plotData = {
+    y: speedsData.moveSpeedsNoShortdur,
+    x: moveTimes,
+    name: `Tag ${firstTagId}: speed`
+  };
+  const waveRects = waveIndices.map((wave)=>{
+    return {
+      type: "rect",
+      x0: moveTimes[wave[0]],
+      x1: moveTimes[wave[1]],
+      xref: "x",
+      yref: "paper",
+      y0: 0,
+      y1: 1,
+    }
+  });
+
+  // Add a placeholder shape at index 0 for the timebar. Will be updated later using setTimebarToTime.
+  const shapes = [{
+    type: "line",
+    x0: moveTimes[0],
+    x1: moveTimes[0],
+    yref: "paper",
+    y0: 0,
+    y1: 1,
+    line: { color: "red", width: 2 },
+  }].concat(waveRects)
+
   const layout = {
     title: { text: "Speed" },
     showLegend: true,
     xaxis: { tickformat: "%H:%M:%S" },
-    autoSize: true
+    autoSize: true,
+    shapes: shapes
   };
-  await Plotly.newPlot("wave-plot", plotData, layout, { responsive: true });
+
+  await Plotly.newPlot("wave-plot", [plotData], layout, { responsive: true });
+
 }
 
 export function setTimebarToTime(timelist, time) {
@@ -90,14 +111,5 @@ export function setTimebarToTime(timelist, time) {
   }
 
   const x = Number(timelist[wptTimeIdx]);
-  const timebar = {
-    type: "line",
-    x0: x,
-    x1: x,
-    yref: "paper",
-    y0: 0,
-    y1: 1,
-    line: { color: "red", width: 2 },
-  };
-  Plotly.relayout(plot, { shapes: [timebar] });
+  Plotly.relayout(plot, { 'shapes[0].x0': x, 'shapes[0].x1': x});
 }
