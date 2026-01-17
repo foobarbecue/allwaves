@@ -3,6 +3,9 @@ import "./main.mjs";
 import { timechangeEvtHdlr } from "./ui.mjs";
 
 const layoutConfig = {
+    settings: {
+            showPopoutIcon: false
+    },
     root: {
         type: 'row',
         content: [
