@@ -12,31 +12,47 @@ const getTagCoordsForPlot = (tagId) => {
   const geoData = seshGeodataCache[seshDate][tagId];
   const timeData = seshTimestampCache[seshDate][tagId];
   const tagLocnsUTM = geoData.map(
-    // Convert to meters in UTM 11N
-    (locn) =>
-      proj4(
-        "EPSG:4326",
-        "+proj=utm +zone=11 +datum=WGS84 +units=m +no_defs +type=crs",
-        [locn[1], locn[0]],
-      ),
+      // Convert to meters in UTM 11N
+      (locn) =>
+          proj4(
+              "EPSG:4326",
+              "+proj=utm +zone=11 +datum=WGS84 +units=m +no_defs +type=crs",
+              [locn[1], locn[0]],
+          ),
   );
+
+
   for (let ind = 0; ind < tagLocnsUTM.length - 1; ind++) {
+    // Calculate motion distance between each sample (meters)
     moveDists.push(
-      Math.sqrt(
-        (tagLocnsUTM[ind + 1][0] - tagLocnsUTM[ind][0]) ** 2 +
-          (tagLocnsUTM[ind + 1][1] - tagLocnsUTM[ind][1]) ** 2,
-      ),
+        Math.sqrt(
+            (tagLocnsUTM[ind + 1][0] - tagLocnsUTM[ind][0]) ** 2 +
+            (tagLocnsUTM[ind + 1][1] - tagLocnsUTM[ind][1]) ** 2,
+        ),
     );
+
+    // Calculate time elapsed between each sample (milliseconds)
     moveDurations.push(timeData[ind + 1] - timeData[ind]);
-    moveSpeeds.push(moveDists[ind] / (moveDurations[ind] * 1000));
+
+    // Calculate speed at sample (meters / second)
+    moveSpeeds.push(moveDists[ind] / (moveDurations[ind] / 1000));
+
     moveTimes.push(timeData[ind]);
   }
 
+  // Create blacklist of samples that have less than 100ms spacing
+  // const tooQuickSamples = moveDurations.map(
+  //     (val, ind)=>{
+  //       if (val < 100){
+  //         return ind
+  //       }
+  //     }
+  // )
   document.querySelector("#wave-plot-title").textContent =
-    `Mapping: ${seshDate}`;
+      `Mapping: ${seshDate}`;
 
-  const distsPlot = {
-    y: moveDists,
+  const speedsPlot = {
+    y: moveSpeeds,
     // y: [...Array(moveTimes.length).keys()],
     x: moveTimes.map((timestamp) => new Date(timestamp)),
     name: `Tag ${tagId}: speed`,
@@ -47,8 +63,7 @@ const getTagCoordsForPlot = (tagId) => {
   //     y: tagLocnsUTM.map(locn => locn.y),
   //     x: tagLocnsUTM.map(locn => locn.x)
   // }
-
-  return distsPlot;
+  return speedsPlot;
 };
 
 export async function plotSession() {
@@ -70,9 +85,9 @@ export function setTimebarToTime(timelist, time) {
   const plot = document.getElementById("wave-plot");
   const wptTimeIdx = getClosestIndex(timelist, time.getTime());
   if (
-    wptTimeIdx === null ||
-    wptTimeIdx === undefined ||
-    Number.isNaN(Number(wptTimeIdx))
+      wptTimeIdx === null ||
+      wptTimeIdx === undefined ||
+      Number.isNaN(Number(wptTimeIdx))
   ) {
     // Clear any vertical line
     Plotly.relayout(plot, { shapes: [] });
