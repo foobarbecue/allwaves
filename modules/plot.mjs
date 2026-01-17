@@ -20,43 +20,76 @@ const getTagCoordsForPlot = (tagId) => {
         [locn[1], locn[0]],
       ),
   );
+
+
+
+
   for (let ind = 0; ind < tagLocnsUTM.length - 1; ind++) {
+    // Calculate motion distance between each sample (meters)
     moveDists.push(
       Math.sqrt(
         (tagLocnsUTM[ind + 1][0] - tagLocnsUTM[ind][0]) ** 2 +
           (tagLocnsUTM[ind + 1][1] - tagLocnsUTM[ind][1]) ** 2,
       ),
     );
-    moveDurations.push(timeData[ind + 1] - timeData[ind]);
-    moveSpeeds.push(moveDists[ind] / (moveDurations[ind] * 1000));
-    moveTimes.push(timeData[ind]);
-  }
 
+    // Calculate time elapsed between each sample (milliseconds)
+    moveDurations.push(timeData[ind + 1] - timeData[ind]);
+
+    // Calculate speed at sample (meters / second)
+    moveSpeeds.push(moveDists[ind] / (moveDurations[ind] / 1000));
+
+    moveTimes.push(timeData[ind]);
+
+  }
+// Create blacklist of samples that have less than 100ms spacing
+  // const tooQuickSamples = moveDurations.map(
+  //     (val, ind)=>{
+  //       if (val < 100){
+  //         return ind
+  //       }
+  //     }
+  // )
   document.querySelector("#wave-plot-title").textContent =
     `Mapping: ${seshDate}`;
 
-  const distsPlot = {
-    y: moveDists,
+  const speedsPlot = {
+    y: moveSpeeds,
     // y: [...Array(moveTimes.length).keys()],
     x: moveTimes.map((timestamp) => new Date(timestamp)),
     name: `Tag ${tagId}: speed`,
     // mode: 'lines+markers'
   };
 
+  const distsPlot = {
+    y: moveDists.map((val)=>val*10),
+    // y: [...Array(moveTimes.length).keys()],
+    x: moveTimes.map((timestamp) => new Date(timestamp)),
+    name: `Tag ${tagId}: move distances *10`,
+  }
+
+  const dursPlot = {
+    y: moveDurations.map((val)=>val/10),
+    // y: [...Array(moveDurations.length).keys()],
+    x: moveTimes.map((timestamp) => new Date(timestamp)),
+    name: `Tag ${tagId}: sample durations / 10`,
+  }
+
   // const locnPlot = {
   //     y: tagLocnsUTM.map(locn => locn.y),
   //     x: tagLocnsUTM.map(locn => locn.x)
   // }
-
-  return distsPlot;
+  console.log({tagLocnsUTM, moveSpeeds, moveTimes, moveDurations, moveDists})
+  return [speedsPlot, distsPlot, dursPlot];
 };
 
 export async function plotSession() {
-  const plotData = [];
+
   const firstTagId = Object.keys(seshGeodataCache[seshDate])[0];
-  for (const tagId in seshGeodataCache[seshDate]) {
-    plotData.push(getTagCoordsForPlot(tagId));
-  }
+  // for (const tagId in seshGeodataCache[seshDate]) {
+  //   plotData.push(getTagCoordsForPlot(tagId));
+  // }
+  const plotData = getTagCoordsForPlot(firstTagId);
   const layout = {
     title: { text: "Speed" },
     showLegend: true,
@@ -64,6 +97,7 @@ export async function plotSession() {
     autoSize: true
   };
   await Plotly.newPlot("wave-plot", plotData, layout, { responsive: true });
+  console.log(plotData)
 }
 
 export function setTimebarToTime(timelist, time) {
