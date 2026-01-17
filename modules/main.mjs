@@ -142,7 +142,8 @@ const formatDescription = async (playlist_vid) => {
       );
       await drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
       await plotSession(seshDate);
-      const timeOffset = timeOffsets[seshDate]?.[1] || 0;
+      const vidNum = vidTitleToVidNumber(playlist_vid.snippet.title);
+      const timeOffset = timeOffsets[seshDate]?.[vidNum] || 0;
       document.querySelector('#time-adj').value = timeOffset;
       document.querySelector('#time-adj-disp').innerText = timeOffset;
     };

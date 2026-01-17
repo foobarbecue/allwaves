@@ -10,5 +10,8 @@ export function setSeshDate(date) {
 export const timeOffsets = {
   "2026 01 14": {
     1: -27
+  },
+  "2026 01 10": {
+    2: -35
   }
 }
