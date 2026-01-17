@@ -75,3 +75,39 @@ export function vidTitleToTrackStartTime(vidTitle) {
 export function vidTitleToVidNumber(vidTitle) {
   return vidTitle.match(/.* (\d*)$/)[1];
 }
+
+function triangularMA_uneven(data, windowRadius) {
+  // data: array of {t, v} sorted by t
+  // windowRadius: half-width of the window in time units
+
+  const result = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const center = data[i].t;
+    let sum = 0;
+    let weightSum = 0;
+
+    // Look left
+    for (let j = i; j >= 0 && center - data[j].t <= windowRadius; j--) {
+      const dist = Math.abs(data[j].t - center);
+      const weight = 1 - dist / windowRadius; // triangular: 1 at center, 0 at edge
+      sum += data[j].v * weight;
+      weightSum += weight;
+    }
+
+    // Look right (skip center since we already counted it)
+    for (let j = i + 1; j < data.length && data[j].t - center <= windowRadius; j++) {
+      const dist = Math.abs(data[j].t - center);
+      const weight = 1 - dist / windowRadius;
+      sum += data[j].v * weight;
+      weightSum += weight;
+    }
+
+    result.push({
+      t: center,
+      v: sum / weightSum
+    });
+  }
+
+  return result;
+}
