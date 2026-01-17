@@ -1,5 +1,4 @@
 import "https://cdn.plot.ly/plotly-3.1.2.min.js";
-import { loadAndParseSession } from "./parse_session.mjs";
 import { getClosestIndex } from "./math.mjs";
 import proj4 from "https://cdn.jsdelivr.net/npm/proj4@2.9.2/+esm";
 import { seshDate, seshTimestampCache, seshGeodataCache } from "./data.js";
@@ -41,13 +40,9 @@ const getTagCoordsForPlot = (tagId) => {
   }
 
   // Create blacklist of samples that have less than 100ms spacing
-  // const tooQuickSamples = moveDurations.map(
-  //     (val, ind)=>{
-  //       if (val < 100){
-  //         return ind
-  //       }
-  //     }
-  // )
+  const moveSpeedsNoShortdur = moveSpeeds.filter((el, ind)=>190 < moveDurations[ind] && moveDurations[ind] < 210)
+  const moveTimesNoShortdur = moveTimes.filter((el, ind)=>190 < moveDurations[ind] && moveDurations[ind] < 210)
+
   document.querySelector("#wave-plot-title").textContent =
       `Mapping: ${seshDate}`;
 
