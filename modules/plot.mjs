@@ -101,7 +101,9 @@ export async function plotSession() {
   const wavePlot = await Plotly.newPlot("wave-plot", [plotData], layout, { responsive: true });
 
   // Automatically resize plot when container size changes
-  const resizeObserver = new ResizeObserver(()=>{wavePlot.resize()})
+  const resizeObserver = new ResizeObserver(()=>{
+    Plotly.Plots.resize(document.getElementById("wave-plot"))
+  })
   resizeObserver.observe(document.getElementById("wave-plot").parentElement)
 
 }
