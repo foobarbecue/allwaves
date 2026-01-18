@@ -7,22 +7,6 @@ import {
 import { setMarkerToTime } from "./wave_map.mjs";
 import { seshTimestampCache, seshDate } from "./data.js";
 
-const toggleMapCollapse = () => {
-  document.getElementById("wave-map").classList.toggle("collapsed");
-};
-
-const toggleVideoCollapse = () => {
-  document.getElementById("wave-video").classList.toggle("collapsed");
-};
-
-const toggleListCollapse = () => {
-  document.getElementById("wave-list").classList.toggle("collapsed");
-};
-
-const togglePlotCollapse = () => {
-  document.getElementById("wave-plot").classList.toggle("collapsed");
-};
-
 /**
  * Updates display widgets (map, plots) with the latest time that the video is seeked to.
  * In addition to ytVidTime, this function also gets data from the DOM:
@@ -30,7 +14,7 @@ const togglePlotCollapse = () => {
  *   - Gets the time adjustment from the time adjustment range input element
  * @param ytVidTime Time that the video is showing
  */
-const timechangeEvtHdlr = (ytVidTime) => {
+export const timechangeEvtHdlr = (ytVidTime) => {
   const trackStartTime = vidTitleToTrackStartTime(player.videoTitle);
   const vidNumber = vidTitleToVidNumber(player.videoTitle);
   let timeAdj = document.querySelector("#time-adj").value;
@@ -63,13 +47,6 @@ export const setupTimechangeEvtHdlr = () => {
 };
 
 export function setupUiEvtHdlrs() {
-  document.getElementById("wave-map-togglebutton").onclick = toggleMapCollapse;
-  document.getElementById("wave-video-togglebutton").onclick =
-    toggleVideoCollapse;
-  document.getElementById("wave-list-togglebutton").onclick =
-    toggleListCollapse;
-  document.getElementById("wave-plot-togglebutton").onclick =
-    togglePlotCollapse;
   document.getElementById("time-adj").oninput = (ev) => {
     document.getElementById("time-adj-disp").innerText = ev.target.value;
     timechangeEvtHdlr(window.player.getCurrentTime());

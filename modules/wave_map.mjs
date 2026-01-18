@@ -66,5 +66,6 @@ export function makeMap() {
   waveMap.addLayer(presentLoc);
   waveMap.presentLoc = presentLoc;
   waveMap.tagTracks = [];
+  waveMap.zoomControl.setPosition('bottomleft');
   return waveMap;
 }

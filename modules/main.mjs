@@ -1,4 +1,4 @@
-import { setupTimechangeEvtHdlr, setupUiEvtHdlrs } from "./ui.mjs";
+import { setupTimechangeEvtHdlr } from "./ui.mjs";
 import { loadAndParseSession } from "./parse_session.mjs";
 import { makeMap, setMapContents } from "./wave_map.mjs";
 import { plotSession } from "./plot.mjs";
@@ -7,7 +7,9 @@ import {
   seshTimestampCache,
   seshDate,
   setSeshDate,
+  timeOffsets
 } from "./data.js";
+import { vidTitleToVidNumber } from "./math.mjs";
 
 export async function drawGeodataForDay(
   seshDate,
@@ -22,8 +24,12 @@ export async function drawGeodataForDay(
     if (!seshData) {
       document.querySelector("#wave-map-title").textContent =
         `Mapping: no data for ${seshDate}`;
-      document.getElementById("wave-map").classList.add("collapsed");
-      document.getElementById("wave-plot").classList.add("collapsed");
+      document.querySelector("#wave-plot-title").textContent =
+          `Plotting: no data for ${seshDate}`;
+      document.getElementById("wave-map").parentElement.parentElement
+          .parentElement.parentElement.querySelector(".lm_collapse_button").click()
+      document.getElementById("wave-plot").parentElement.parentElement
+          .parentElement.parentElement.querySelector(".lm_collapse_button").click()
       return;
     } else {
       document.querySelector("#wave-map-title").textContent =
@@ -101,6 +107,10 @@ const getVids = async () => {
             seshTimestampCache,
           );
           await plotSession(seshDate);
+          const vidNumber = vidTitleToVidNumber(vid.snippet.title);
+          const timeOffset = timeOffsets[seshDate]?.[vidNumber] || 0;
+          document.querySelector('#time-adj').value = timeOffset;
+          document.querySelector('#time-adj-disp').innerText = timeOffset;
         };
         vid_li.appendChild(vid_li_a);
         pl_li.querySelector("ul").appendChild(vid_li);
@@ -136,6 +146,10 @@ const formatDescription = async (playlist_vid) => {
       );
       await drawGeodataForDay(seshDate, seshGeodataCache, seshTimestampCache);
       await plotSession(seshDate);
+      const vidNum = vidTitleToVidNumber(playlist_vid.snippet.title);
+      const timeOffset = timeOffsets[seshDate]?.[vidNum] || 0;
+      document.querySelector('#time-adj').value = timeOffset;
+      document.querySelector('#time-adj-disp').innerText = timeOffset;
     };
     description.appendChild(wave_li);
   });
@@ -154,4 +168,3 @@ window.onYouTubeIframeAPIReady = () => {
 };
 
 getVids();
-setupUiEvtHdlrs();

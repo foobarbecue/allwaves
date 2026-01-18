@@ -2,49 +2,19 @@ body {
     background-color: Canvas;
     color: CanvasText;
     color-scheme: light dark;
+    margin: 0;
 }
 
-#wave-map, #wave-video, #wave-plot {
-    height: 100%;
+#wave-video, #wave-map, #wave-plot {
+    position: relative;
     width: 100%;
-}
-
-.collapsed {
-    display: none;
-}
-
-.togglebutton-right {
-    border: thin black solid;
-    border-bottom: none;
-}
-
-#wave-list:not(.collapsed) {
-    width: 25em;
-    overflow-y: scroll;
-}
-
-#wave-list-titlebar-container {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-}
-
-#wave-list-togglebutton {
-    float: left;
-    clear: both;
-    border: thin black solid;
-    border-left: none;
-}
-
-#wave-map-titlebar, #wave-video-titlebar, #wave-plot-titlebar {
-    display: flex;
-    justify-content: space-between;
-}
-
-#wave-display {
-    flex-grow: 1;
     height: 100%;
+}
+
+.lm_content {
     display: flex;
     flex-direction: column;
+    white-space: nowrap;
 }
 
 @media (prefers-color-scheme: dark) {

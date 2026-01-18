@@ -11,21 +11,21 @@ export function getClosestIndex(a, x) {
     }
   }
   if (a[low] == x) hi = low;
-  console.log(
-    "closest value to " +
-      new Date(x) +
-      " is " +
-      new Date(a[low]) +
-      " at index " +
-      low,
-  );
+  // console.log(
+  //   "closest value to " +
+  //     new Date(x) +
+  //     " is " +
+  //     new Date(a[low]) +
+  //     " at index " +
+  //     low,
+  // );
   return low;
 }
 
 /**
  * Given a time trackStartTime as a js Date object, a video number vidNum and vidTimeMS in milliseconds, return UTC time
  * @param {Date} trackStartTime
- * @param {number} vidNum
+ * @param {number} vidNum The soloshot splits up output into roughly 10 minute videos. This is the sequential numerical index of those video sections.
  * @param {number} vidTimeMS
  */
 export function vidTimeToUTC(trackStartTime, vidNum, vidTimeMS) {
@@ -74,4 +74,42 @@ export function vidTitleToTrackStartTime(vidTitle) {
  */
 export function vidTitleToVidNumber(vidTitle) {
   return vidTitle.match(/.* (\d*)$/)[1];
+}
+
+/**
+ * Loop through data and pick times when speed was above a threshold for at least window consecutive samples.
+ * Return an object of index values [[startIndex1,endIndex1],[startIndex2,endIndex2],...]
+ * @param speeds array of speeds in meters per second
+ * @param threshold minimum speed to trigger detector
+ * @param window minimum number of samples the signal must be high to trigger detector
+ */
+export function findWaves(speeds, threshold, window){
+  // generate a boolean array of whether speed exceeds the threshold
+  const fastEnoughIndices = speeds.map(speed => speed > threshold);
+
+  // loop through fastEnoughIndices and create start, end pairs
+  let waves = [];
+  let consecutiveHigh = 0;
+  let latestStart, latestEnd;
+  fastEnoughIndices.map(
+      (val, ind, arr)=>{
+        if (val){
+          consecutiveHigh ++
+          // If we just rose above the threshold
+          if (! arr[ind-1]){
+            latestStart = ind;
+          }
+        } else {
+          // If we just sunk below the threshold
+          if (arr[ind-1]){
+            latestEnd = ind;
+            if (consecutiveHigh > window) {
+              waves.push([latestStart, latestEnd])
+            }
+          }
+          consecutiveHigh = 0
+        }
+      }
+  )
+  return waves
 }
