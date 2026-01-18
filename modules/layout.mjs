@@ -113,10 +113,56 @@ const createWavePlot = (container, state) => {
 const container = document.getElementById('app-container');
 const layout = new GoldenLayout(container, handleBindComponent, () => {});
 
+// Add collapse buttons
+const collapseState = new Map();
+const COLLAPSED_SIZE = 5; // percentage
+layout.on('stackCreated', (event) => {
+    const stack = event.target;
+
+    const stackElement = stack.element;
+    if (!stackElement) return;
+
+    const controlsContainer = stackElement.querySelector('.lm_header .lm_controls');
+    if (!controlsContainer || controlsContainer.querySelector('.lm_collapse_button')) return;
+
+    const btn = document.createElement('div');
+    btn.className = 'lm_collapse_button';
+    btn.innerHTML = '−';
+
+    const stackId = stack.id || Math.random().toString(36).substr(2, 9);
+    collapseState.set(stackId, {
+        isCollapsed: false,
+        originalSize: stack.size
+    });
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+
+        const state = collapseState.get(stackId);
+
+        if (!state.isCollapsed) {
+            // Collapse
+            state.originalSize = stack.size;
+            stack.size = COLLAPSED_SIZE;
+            btn.innerHTML = '+';
+            state.isCollapsed = true;
+        } else {
+            // Expand
+            stack.size = state.originalSize;
+            btn.innerHTML = '−';
+            state.isCollapsed = false;
+        }
+
+        layout.updateSize();
+    });
+
+    controlsContainer.insertBefore(btn, controlsContainer.firstChild);
+})
+
+// Only load config in main window - popouts get config from localStorage automatically
 // Check if this is a popout window
 const isSubWindow = new URLSearchParams(window.location.search).has('gl-window');
 
-// Only load config in main window - popouts get config from localStorage automatically
 if (!isSubWindow && !layout.isSubWindow) {
     layout.loadLayout(layoutConfig);
 }

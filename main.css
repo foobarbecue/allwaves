@@ -14,6 +14,7 @@ body {
 .lm_content {
     display: flex;
     flex-direction: column;
+    white-space: nowrap;
 }
 
 @media (prefers-color-scheme: dark) {
