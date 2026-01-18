@@ -2,7 +2,7 @@ import "https://cdn.plot.ly/plotly-3.1.2.min.js";
 import { getClosestIndex } from "./math.mjs";
 import proj4 from "https://cdn.jsdelivr.net/npm/proj4@2.9.2/+esm";
 import { seshDate, seshTimestampCache, seshGeodataCache } from "./data.js";
-import { findWaves} from "./math.mjs";
+import { findWaves } from "./math.mjs";
 
 const getSpeedData = (tagId) => {
   const moveDists = [];
@@ -71,6 +71,11 @@ export async function plotSession() {
       yref: "paper",
       y0: 0,
       y1: 1,
+      fillcolor: 'red',
+      opacity: 0.3,
+      line: {
+        width: 0
+      }
     }
   });
 
@@ -82,7 +87,7 @@ export async function plotSession() {
     yref: "paper",
     y0: 0,
     y1: 1,
-    line: { color: "red", width: 2 },
+    line: { color: "black", width: 2 },
   }].concat(waveRects)
 
   const layout = {
