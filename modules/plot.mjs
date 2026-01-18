@@ -93,7 +93,7 @@ export async function plotSession() {
   const layout = {
     title: { text: "Speed" },
     showLegend: true,
-    xaxis: { tickformat: "%H:%M:%S" },
+    xaxis: { tickformat: "%H:%M:%S", rangeslider: {} },
     autoSize: true,
     shapes: shapes
   };
