@@ -45,7 +45,7 @@ const getSpeedData = (tagId) => {
   const moveTimesNoShortdur = moveTimes.filter((el, ind)=>190 < moveDurations[ind] && moveDurations[ind] < 210)
 
   document.querySelector("#wave-plot-title").textContent =
-      `Mapping: ${seshDate}`;
+      `Plotting: ${seshDate}`;
 
 
 
