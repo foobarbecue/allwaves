@@ -24,8 +24,12 @@ export async function drawGeodataForDay(
     if (!seshData) {
       document.querySelector("#wave-map-title").textContent =
         `Mapping: no data for ${seshDate}`;
-      document.getElementById("wave-map").classList.add("collapsed");
-      document.getElementById("wave-plot").classList.add("collapsed");
+      document.querySelector("#wave-plot-title").textContent =
+          `Plotting: no data for ${seshDate}`;
+      document.getElementById("wave-map").parentElement.parentElement
+          .parentElement.parentElement.querySelector(".lm_collapse_button").click()
+      document.getElementById("wave-plot").parentElement.parentElement
+          .parentElement.parentElement.querySelector(".lm_collapse_button").click()
       return;
     } else {
       document.querySelector("#wave-map-title").textContent =
