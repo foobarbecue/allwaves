@@ -63,7 +63,7 @@ export function vidTitleToTrackStartTime(vidTitle) {
     return new Date(year, month, day, hour, minute, second);
   } else {
     // Return null or throw an error if the format does not match
-    console.error("Video title format is incorrect.");
+    console.error(`Video title format is unexpected: ${vidTitle}.`);
     return null;
   }
 }
