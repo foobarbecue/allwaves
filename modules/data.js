@@ -8,6 +8,20 @@ export function setSeshDate(date) {
 
 // It's really about time to add a database
 export const timeOffsets = {
+  "2026 01 30": {
+    1: -17,
+    2: -20,
+    3: -25,
+    4: -26,
+    5: -34,
+    6: -38
+  },
+  "2026 01 08": {
+    1: -81,
+    2: -87,
+    3: -86,
+    4: -95
+  },
   "2026 01 16": {
     2: -27,
     3: -28,
